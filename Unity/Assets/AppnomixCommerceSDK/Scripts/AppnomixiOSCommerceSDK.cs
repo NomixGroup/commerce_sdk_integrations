@@ -5,7 +5,28 @@ namespace AppnomixCommerce
 {
     public class AppnomixiOSCommerceSDK : IAppnomixCommerceSDK
     {
-        [DllImport ("__Internal")]
+        private readonly string appGroupName;
+        private readonly string onboardingLogoAssetName;
+        private readonly string appURLScheme;
+        private readonly bool requestLocation;
+        private readonly bool requestTracking;
+
+        public AppnomixiOSCommerceSDK(
+            string appGroupName,
+            string onboardingLogoAssetName,
+            string appURLScheme,
+            bool requestLocation,
+            bool requestTracking
+        )
+        {
+            this.appGroupName = appGroupName;
+            this.onboardingLogoAssetName = onboardingLogoAssetName;
+            this.appURLScheme = appURLScheme;
+            this.requestLocation = requestLocation;
+            this.requestTracking = requestTracking;
+        }
+
+        [DllImport("__Internal")]
         private static extern void AppnomixCommerceSDK_start(
             string clientID,
             string authToken,
@@ -15,29 +36,24 @@ namespace AppnomixCommerce
             bool requestLocation,
             bool requestTracking);
 
-        [DllImport ("__Internal")]
-        private static extern void AppnomixCommerceSDK_showOnboarding ();
+        [DllImport("__Internal")]
+        private static extern void AppnomixCommerceSDK_showOnboarding();
 
-        [DllImport ("__Internal")]
+        [DllImport("__Internal")]
         private static extern bool AppnomixCommerceSDK_isExtensionInstalled();
 
         public void InitSdk(
-            string clientID, 
-            string authToken,
-            string appGroupName_iOS, // e.g. group.app.appnomix.demo-unity
-            string onboardingLogoAssetName, 
-            string appURLScheme_iOS, // e.g. savers-league-coupons://
-            bool requestLocation, 
-            bool requestTracking)
+            string clientID,
+            string authToken)
         {
             try
             {
                 AppnomixCommerceSDK_start(
                     clientID,
                     authToken,
-                    appGroupName_iOS,
+                    appGroupName,
                     onboardingLogoAssetName,
-                    appURLScheme_iOS,
+                    appURLScheme,
                     requestLocation,
                     requestTracking);
             }
@@ -52,7 +68,8 @@ namespace AppnomixCommerce
             Debug.Log("LaunchOnboarding");
             try
             {
-                if (!AppnomixCommerceSDK_isExtensionInstalled()) {
+                if (!AppnomixCommerceSDK_isExtensionInstalled())
+                {
                     AppnomixCommerceSDK_showOnboarding();
                 }
             }

@@ -4,31 +4,14 @@ namespace AppnomixCommerce
 {
     public class AppnomixAndroidCommerceSDK : IAppnomixCommerceSDK
     {
-        public void InitSdk(
-            string clientID, 
-            string authToken, 
-            string appGroupName_iOS, // e.g. group.app.appnomix.demo-unity
-            string onboardingLogoAssetName, 
-            string appURLScheme_iOS, // e.g. savers-league-coupons://
-            bool requestLocation, 
-            bool requestTracking)
+        public void InitSdk(string clientID, string authToken)
         {
             string facadeClassName = "app.appnomix.sdk.external.CouponsSdkFacade";
             string configClassName = "app.appnomix.sdk.external.CouponsSdkFacade$Config";
-            string logoImageResourceName = "logo_image"; // Name of the drawable resource
             try
             {
-                // Get the activity instance
-                AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-                AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-
-                // Load the drawable resource
-                AndroidJavaObject resources = currentActivity.Call<AndroidJavaObject>("getResources");
-                int appIconRes = resources.Call<int>("getIdentifier", logoImageResourceName, "drawable",
-                    currentActivity.Call<string>("getPackageName"));
-
                 // Create Config instance
-                AndroidJavaObject configInstance = new AndroidJavaObject(configClassName, appIconRes, authToken, clientID);
+                AndroidJavaObject configInstance = new AndroidJavaObject(configClassName, null, authToken, clientID);
 
                 // Get the CouponsSdkFacade class
                 AndroidJavaClass couponsSdkFacade = new AndroidJavaClass(facadeClassName);

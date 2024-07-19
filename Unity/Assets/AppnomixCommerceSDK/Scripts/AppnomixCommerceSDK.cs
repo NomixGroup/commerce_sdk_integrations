@@ -5,51 +5,44 @@ namespace AppnomixCommerce
     public interface IAppnomixCommerceSDK
     {
         void InitSdk(
-            string clientID, 
-            string authToken, 
-            string appGroupName_iOS, // e.g. group.app.appnomix.demo-unity
-            string onboardingLogoAssetName, 
-            string appURLScheme_iOS, // e.g. savers-league-coupons://
-            bool requestLocation, 
-            bool requestTracking);
+            string clientID,
+            string authToken);
 
         void LaunchOnboarding();
     }
 
     public class AppnomixCommerceSDK
     {
-        private IAppnomixCommerceSDK appnomixSDK;
+        private readonly IAppnomixCommerceSDK sdkWrapper;
 
-        public AppnomixCommerceSDK()
-        {
-            #if UNITY_IOS
-                appnomixSDK = new AppnomixiOSCommerceSDK();
-            #elif UNITY_ANDROID
-                appnomixSDK = new AppnomixiOSCommerceSDK();
-            #else
-                Debug.LogError("Unsupported platform");
-            #endif
-        }
-
-        public void LaunchSDK(
-            string clientID, 
-            string authToken,
-            string appGroupName_iOS, // e.g. group.app.appnomix.demo-unity
-            string onboardingLogoAssetName, 
-            string appURLScheme_iOS, // e.g. savers-league-coupons://
-            bool requestLocation, 
+        public AppnomixCommerceSDK(
+            string iOSAppGroupName, // e.g. group.app.appnomix.demo-unity
+            string iOSAppURLScheme, // e.g. savers-league-coupons://
+            string onboardingLogoAssetName,
+            bool requestLocation,
             bool requestTracking)
         {
-            appnomixSDK?.InitSdk(
-                clientID,
-                authToken,
-                appGroupName_iOS,
-                onboardingLogoAssetName,
-                appURLScheme_iOS,
-                requestLocation,
-                requestTracking);
+#if UNITY_IOS
+            sdkWrapper = new AppnomixiOSCommerceSDK(
+                            iOSAppGroupName,
+                            onboardingLogoAssetName,
+                            iOSAppURLScheme,
+                            requestLocation,
+                            requestTracking
+                        );
+#elif UNITY_ANDROID
+            sdkWrapper = new AppnomixAndroidCommerceSDK();
+#else
+            Debug.LogError("Unsupported platform");
+#endif
+        }
 
-            appnomixSDK?.LaunchOnboarding();
+        public void LaunchOnboarding(
+            string clientID,
+            string authToken)
+        {
+            sdkWrapper?.InitSdk(clientID, authToken);
+            sdkWrapper?.LaunchOnboarding();
         }
     }
 }
