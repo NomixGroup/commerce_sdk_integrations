@@ -18,14 +18,12 @@ namespace AppnomixCommerce
         public AppnomixCommerceSDK(
             string iOSAppGroupName, // e.g. group.app.appnomix.demo-unity
             string iOSAppURLScheme, // e.g. savers-league-coupons://
-            string onboardingLogoAssetName,
             bool requestLocation,
             bool requestTracking)
         {
 #if UNITY_IOS
             sdkWrapper = new AppnomixiOSCommerceSDK(
                             iOSAppGroupName,
-                            onboardingLogoAssetName,
                             iOSAppURLScheme,
                             requestLocation,
                             requestTracking

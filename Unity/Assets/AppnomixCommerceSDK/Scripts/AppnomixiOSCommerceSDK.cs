@@ -6,21 +6,18 @@ namespace AppnomixCommerce
     public class AppnomixiOSCommerceSDK : IAppnomixCommerceSDK
     {
         private readonly string appGroupName;
-        private readonly string onboardingLogoAssetName;
         private readonly string appURLScheme;
         private readonly bool requestLocation;
         private readonly bool requestTracking;
 
         public AppnomixiOSCommerceSDK(
             string appGroupName,
-            string onboardingLogoAssetName,
             string appURLScheme,
             bool requestLocation,
             bool requestTracking
         )
         {
             this.appGroupName = appGroupName;
-            this.onboardingLogoAssetName = onboardingLogoAssetName;
             this.appURLScheme = appURLScheme;
             this.requestLocation = requestLocation;
             this.requestTracking = requestTracking;
@@ -52,7 +49,7 @@ namespace AppnomixCommerce
                     clientID,
                     authToken,
                     appGroupName,
-                    onboardingLogoAssetName,
+                    "",
                     appURLScheme,
                     requestLocation,
                     requestTracking);
