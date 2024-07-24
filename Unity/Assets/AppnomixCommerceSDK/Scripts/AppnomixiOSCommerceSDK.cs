@@ -1,3 +1,5 @@
+#if UNITY_IOS
+
 using UnityEngine;
 using System.Runtime.InteropServices;
 
@@ -77,3 +79,5 @@ namespace AppnomixCommerce
         }
     }
 }
+
+#endif
