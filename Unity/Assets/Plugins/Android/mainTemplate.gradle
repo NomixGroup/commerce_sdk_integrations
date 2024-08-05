@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'app.appnomix:sdk:1.0.1'
+    implementation 'app.appnomix:sdk:1.0.2'
    // coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 **DEPS**}
 
