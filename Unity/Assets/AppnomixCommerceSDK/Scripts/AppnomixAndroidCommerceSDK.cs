@@ -57,7 +57,20 @@ namespace AppnomixCommerce
 
         public bool IsOnboardingDone()
         {
-            return false; // The logic is in the native SDK: if user declines 3 times, there is no onboarding display
+            string facadeClassName = "app.appnomix.sdk.external.CouponsSdkFacade";
+            try
+            {
+                AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                AndroidJavaClass couponsSdkFacade = new AndroidJavaClass(facadeClassName);
+                AndroidJavaObject sdkFacadeInstance = couponsSdkFacade.GetStatic<AndroidJavaObject>("INSTANCE");
+                return sdkFacadeInstance.Call<bool>("isAccessibilityServiceEnabled");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Failed to get SDK onboarding status: " + e.Message);
+                return false;
+            }
         }
     }
 }
