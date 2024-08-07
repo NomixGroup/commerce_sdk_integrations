@@ -4,7 +4,21 @@ namespace AppnomixCommerce
 {
     public class AppnomixAndroidCommerceSDK : IAppnomixCommerceSDK
     {
-        public void InitSdk(string clientID, string authToken)
+        private readonly string clientID;
+        private readonly string authToken;
+
+        public AppnomixAndroidCommerceSDK(
+            string clientID,
+            string authToken
+        )
+        {
+            this.clientID = clientID;
+            this.authToken = authToken;
+
+            InitSdk();
+        }
+
+        private void InitSdk()
         {
             string facadeClassName = "app.appnomix.sdk.external.CouponsSdkFacade";
             string configClassName = "app.appnomix.sdk.external.CouponsSdkFacade$Config";
@@ -39,6 +53,11 @@ namespace AppnomixCommerce
             {
                 Debug.LogError("Failed to launch SDK onboarding activity: " + e.Message);
             }
+        }
+
+        public bool IsOnboardingDone()
+        {
+            return false; // The logic is in the native SDK: if user declines 3 times, there is no onboarding display
         }
     }
 }

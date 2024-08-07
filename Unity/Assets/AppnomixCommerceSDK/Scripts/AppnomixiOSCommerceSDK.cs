@@ -7,24 +7,6 @@ namespace AppnomixCommerce
 {
     public class AppnomixiOSCommerceSDK : IAppnomixCommerceSDK
     {
-        private readonly string appGroupName;
-        private readonly string appURLScheme;
-        private readonly bool requestLocation;
-        private readonly bool requestTracking;
-
-        public AppnomixiOSCommerceSDK(
-            string appGroupName,
-            string appURLScheme,
-            bool requestLocation,
-            bool requestTracking
-        )
-        {
-            this.appGroupName = appGroupName;
-            this.appURLScheme = appURLScheme;
-            this.requestLocation = requestLocation;
-            this.requestTracking = requestTracking;
-        }
-
         [DllImport("__Internal")]
         private static extern void AppnomixCommerceSDK_start(
             string clientID,
@@ -41,9 +23,33 @@ namespace AppnomixCommerce
         [DllImport("__Internal")]
         private static extern bool AppnomixCommerceSDK_isExtensionInstalled();
 
-        public void InitSdk(
+        private readonly string clientID;
+        private readonly string authToken;
+        private readonly string appGroupName;
+        private readonly string appURLScheme;
+        private readonly bool requestLocation;
+        private readonly bool requestTracking;
+
+        public AppnomixiOSCommerceSDK(
             string clientID,
-            string authToken)
+            string authToken,
+            string appGroupName,
+            string appURLScheme,
+            bool requestLocation,
+            bool requestTracking
+        )
+        {
+            this.clientID = clientID;
+            this.authToken = authToken;
+            this.appGroupName = appGroupName;
+            this.appURLScheme = appURLScheme;
+            this.requestLocation = requestLocation;
+            this.requestTracking = requestTracking;
+
+            InitSdk();
+        }
+
+        private void InitSdk()
         {
             try
             {
@@ -67,7 +73,7 @@ namespace AppnomixCommerce
             Debug.Log("LaunchOnboarding");
             try
             {
-                if (!AppnomixCommerceSDK_isExtensionInstalled())
+                if (!IsOnboardingDone())
                 {
                     AppnomixCommerceSDK_showOnboarding();
                 }
@@ -76,6 +82,11 @@ namespace AppnomixCommerce
             {
                 Debug.LogError("Failed to show onboarding: " + e.Message);
             }
+        }
+
+        public bool IsOnboardingDone()
+        {
+            return AppnomixCommerceSDK_isExtensionInstalled();
         }
     }
 }
