@@ -25,7 +25,7 @@ namespace AppnomixCommerce
             try
             {
                 // Create Config instance
-                AndroidJavaObject configInstance = new AndroidJavaObject(configClassName, null, authToken, clientID);
+                AndroidJavaObject configInstance = new AndroidJavaObject(configClassName, 0, authToken, clientID);
 
                 // Get the CouponsSdkFacade class
                 AndroidJavaClass couponsSdkFacade = new AndroidJavaClass(facadeClassName);
