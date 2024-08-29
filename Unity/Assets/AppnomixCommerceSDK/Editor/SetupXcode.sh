@@ -6,8 +6,10 @@ PROJECT_PATH="$1"
 XC_TEMPLATE_NAME="Appnomix.Safari.Extension.xctemplate"
 XC_FRAMEWORK_NAME="AppnomixCommerce.xcframework"
 
-TEMPLATE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/0.2.47/$XC_TEMPLATE_NAME.zip"
-BINARY_SDK_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/0.2.47/$XC_FRAMEWORK_NAME.zip"
+XC_VERSION=0.2.48
+
+TEMPLATE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_TEMPLATE_NAME.zip"
+BINARY_SDK_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_FRAMEWORK_NAME.zip"
 TEMPLATE_IDENTIFIER="app.appnomix.dt.unit.iosSafariExtension"
 
 cd "$PROJECT_PATH"
@@ -328,21 +330,6 @@ require 'plist'
 
 project_path = '$1' # project path
 description = '$2' # description
-
-  # Open the Xcode project
-  project = Xcodeproj::Project.open(project_path)
-
-  # Set project version to 1.0 in case is missing to avoid compile error
-  project.build_configurations.each do |config|
-    current_version = config.build_settings['CURRENT_PROJECT_VERSION']
-
-    if current_version.nil? || current_version.empty?
-      config.build_settings['CURRENT_PROJECT_VERSION'] = '1.0'
-    end
-  end
-
-  # Save the project file
-  project.save
 
   # Find the Info.plist file in the project directory
   info_plist_path = File.join(project_path, '..', 'Info.plist')
