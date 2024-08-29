@@ -325,14 +325,13 @@ EOF
 # add Appnomix.swift file to UnityFramework to avoid lib compatibility issues
 #add_swift_to_UnityFramework "$PROJECT_PATH/$XCODEPROJ_FILE" "UnityFramework" "$SCRIPT_DIR/../" "$PROJECT_PATH/UnityFramework" "Appnomix.swift"
 
-# PART 3: add NSUserTrackingUsageDescription to Info.plist
-add_user_tracking_usage_description() {
+# PART 3: add NSUserTrackingUsageDescription, NSLocationAlwaysUsageDescription, NSLocationWhenInUseUsageDescription to Info.plist
+add_privacy_permissions() {
     ruby <<EOF
 require 'xcodeproj'
 require 'plist'
 
 project_path = '$1' # project path
-description = '$2' # description
 
   # Find the Info.plist file in the project directory
   info_plist_path = File.join(project_path, '..', 'Info.plist')
@@ -340,14 +339,34 @@ description = '$2' # description
   # Modify the Info.plist file
   if File.exist?(info_plist_path)
     plist = Plist.parse_xml(info_plist_path)
+
+    puts "Adding permissions to #{info_plist_path}"
     
-    # Check if NSUserTrackingUsageDescription is already defined
+    # NSUserTrackingUsageDescription
     if plist.key?('NSUserTrackingUsageDescription')
-      puts "NSUserTrackingUsageDescription is already defined in #{info_plist_path}"
+      puts "NSUserTrackingUsageDescription is already defined: [#{plist['NSUserTrackingUsageDescription']}]"
     else
-      plist['NSUserTrackingUsageDescription'] = description
+      plist['NSUserTrackingUsageDescription'] = "We will use your data to provide a better and personalized ad experience."
       File.write(info_plist_path, plist.to_plist)
       puts "Added NSUserTrackingUsageDescription to #{info_plist_path}"
+    end
+
+    # NSLocationWhenInUseUsageDescription
+    if plist.key?('NSLocationWhenInUseUsageDescription')
+      puts "NSLocationWhenInUseUsageDescription is already defined: [#{plist['NSLocationWhenInUseUsageDescription']}]"
+    else
+      plist['NSLocationWhenInUseUsageDescription'] = "Find exclusive deals and discounts in your area"
+      File.write(info_plist_path, plist.to_plist)
+      puts "Added NSLocationWhenInUseUsageDescription to #{info_plist_path}"
+    end
+
+    # NSLocationAlwaysUsageDescription
+    if plist.key?('NSLocationAlwaysUsageDescription')
+      puts "NSLocationAlwaysUsageDescription is already defined: [#{plist['NSLocationAlwaysUsageDescription']}]"
+    else
+      plist['NSLocationAlwaysUsageDescription'] = "Find exclusive deals and discounts in your area"
+      File.write(info_plist_path, plist.to_plist)
+      puts "Added NSLocationAlwaysUsageDescription to #{info_plist_path}"
     end
   else
     puts "Error: Info.plist file not found at #{info_plist_path}"
@@ -357,7 +376,7 @@ description = '$2' # description
 EOF
 }
 
-add_user_tracking_usage_description "$PROJECT_PATH/$XCODEPROJ_FILE" "We will use your data to provide a better and personalized ad experience."
+add_privacy_permissions "$PROJECT_PATH/$XCODEPROJ_FILE"
 
 # PART 4: app groups
 ensure_app_groups_exists() {
