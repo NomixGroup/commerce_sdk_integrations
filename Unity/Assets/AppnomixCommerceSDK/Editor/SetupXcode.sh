@@ -37,6 +37,7 @@ mkdir -p "$TEMPLATES_DIR"
 
 # PART 1: create new "MyProject Extension" from template
 
+echo "Downloading Safari Extension from $TEMPLATE_URL"
 curl -s -L -o "output.zip" $TEMPLATE_URL
 unzip "output.zip"
 
@@ -176,6 +177,7 @@ new_target.build_configurations.each do |config|
   config.build_settings['GENERATE_INFOPLIST_FILE'] = 'YES'
   config.build_settings['PRODUCT_NAME'] = extension_name
   config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "$BUNDLE_ID.appnomix-extension"
+  config.build_settings['CURRENT_PROJECT_VERSION'] = '$XC_VERSION'
   config.build_settings['DEVELOPMENT_TEAM'] = development_team
   config.build_settings['INFOPLIST_FILE'] = "$APP_EXTENSION_NAME/Info.plist"
   config.build_settings['OTHER_LDFLAGS'] = [
@@ -218,6 +220,7 @@ list_all_targets "$XCODEPROJ_FILE"
 
 # PART 2: add the xcframework
 cd "$TEMP_DIR"
+echo "Downloading XCFramework from $BINARY_SDK_URL"
 curl -s -L -o xcframework.zip $BINARY_SDK_URL
 unzip xcframework.zip
 mv "$XC_FRAMEWORK_NAME" "$PROJECT_PATH/"
