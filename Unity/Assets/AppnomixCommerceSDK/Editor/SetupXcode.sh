@@ -175,6 +175,7 @@ development_team = template_target.build_settings('Debug')['DEVELOPMENT_TEAM'] |
 new_target.build_configurations.each do |config|
   config.build_settings['SWIFT_VERSION'] = '5.0'
   config.build_settings['GENERATE_INFOPLIST_FILE'] = 'YES'
+  config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15'
   config.build_settings['PRODUCT_NAME'] = extension_name
   config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "$BUNDLE_ID.appnomix-extension"
   config.build_settings['CURRENT_PROJECT_VERSION'] = '$XC_VERSION'
