@@ -18,6 +18,8 @@ cd "$PROJECT_PATH"
 XCODEPROJ_FILE=$(find . -name "*.xcodeproj" -maxdepth 1 -type d)
 BUNDLE_ID=$(xcodebuild -showBuildSettings | awk '/PRODUCT_BUNDLE_IDENTIFIER/ { print $3 }')
 TARGET_NAME=$(basename "$XCODEPROJ_FILE" .xcodeproj)
+echo "Found TARGET_NAME=$TARGET_NAME"
+echo "Found BUNDLE_ID=$BUNDLE_ID"
 
 APP_EXTENSION_NAME="$TARGET_NAME Extension"
 APP_EXTENSION_DIR_PATH="$PROJECT_PATH/$APP_EXTENSION_NAME"
@@ -548,8 +550,23 @@ update_extension_name() {
 require 'json'
 require 'plist'
 
-  json_path = '$1' # messages.json path
-  new_extension_name = '$2'
+  project_path = '$1' # project path 
+  json_path = '$2' # messages.json path
+  new_extension_name = '$3'
+
+  # Find the Info.plist file in the project directory
+  info_plist_path = File.join(project_path, 'Info.plist')
+
+  puts "#{info_plist_path}"
+
+  # Get bundle display name from the Info.plist file
+  if File.exist?(info_plist_path)
+    plist = Plist.parse_xml(info_plist_path)
+    
+    if plist.key?('CFBundleDisplayName')
+      new_extension_name = plist['CFBundleDisplayName']
+    end
+  end
 
   puts "Opening JSON file #{json_path}..."
 
@@ -580,7 +597,7 @@ require 'plist'
 EOF
 }
 
-update_extension_name "$APP_EXTENSION_DIR_PATH/Resources/_locales/en/messages.json" "$APP_EXTENSION_NAME"
+update_extension_name "$PROJECT_PATH" "$APP_EXTENSION_DIR_PATH/Resources/_locales/en/messages.json" "Appnomix Extension"
 
 copy_logo_image() {
     local input_image_path="$1"
