@@ -181,6 +181,7 @@ new_target.build_configurations.each do |config|
   config.build_settings['CURRENT_PROJECT_VERSION'] = '$XC_VERSION'
   config.build_settings['DEVELOPMENT_TEAM'] = development_team
   config.build_settings['INFOPLIST_FILE'] = "$APP_EXTENSION_NAME/Info.plist"
+  config.build_settings['INFOPLIST_KEY_CFBundleDisplayName'] = extension_name
   config.build_settings['OTHER_LDFLAGS'] = [
     '-framework',
     'SafariServices'
@@ -547,25 +548,8 @@ update_extension_name() {
 require 'json'
 require 'plist'
 
-  project_path = '$1' # project path 
-  json_path = '$2' # messages.json path
-  new_extension_name = '$3'
-
-  # Find the Info.plist file in the project directory
-  info_plist_path = File.join(project_path, 'Info.plist')
-
-  puts "#{info_plist_path}"
-
-  # Get bundle display name from the Info.plist file
-  if File.exist?(info_plist_path)
-    plist = Plist.parse_xml(info_plist_path)
-    
-    # Check if NSUserTrackingUsageDescription is already defined
-    if plist.key?('CFBundleDisplayName')
-      new_extension_name = plist['CFBundleDisplayName']
-      puts "CFBundleDisplayName is already defined in #{info_plist_path}"
-    end
-  end
+  json_path = '$1' # messages.json path
+  new_extension_name = '$2'
 
   puts "Opening JSON file #{json_path}..."
 
@@ -596,7 +580,7 @@ require 'plist'
 EOF
 }
 
-update_extension_name "$PROJECT_PATH" "$APP_EXTENSION_DIR_PATH/Resources/_locales/en/messages.json" "Appnomix Extension"
+update_extension_name "$APP_EXTENSION_DIR_PATH/Resources/_locales/en/messages.json" "$APP_EXTENSION_NAME"
 
 copy_logo_image() {
     local input_image_path="$1"
