@@ -14,6 +14,10 @@ TEMPLATE_IDENTIFIER="app.appnomix.dt.unit.iosSafariExtension"
 
 cd "$PROJECT_PATH"
 
+# Display the version of Xcode being used
+XCODE_VERSION=$(xcodebuild -version | grep "Xcode")
+echo "Using Xcode version: $XCODE_VERSION"
+
 # Find the .xcodeproj file in the current directory
 XCODEPROJ_FILE=$(find . -name "*.xcodeproj" -maxdepth 1 -type d)
 BUNDLE_ID=$(xcodebuild -showBuildSettings | awk '/PRODUCT_BUNDLE_IDENTIFIER/ { print $3 }')
@@ -179,7 +183,7 @@ new_target.build_configurations.each do |config|
   config.build_settings['GENERATE_INFOPLIST_FILE'] = 'YES'
   config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
   config.build_settings['PRODUCT_NAME'] = extension_name
-  config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "$BUNDLE_ID.appnomix-extension"
+  config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "$BUNDLE_ID.appnomixextension"
   config.build_settings['CURRENT_PROJECT_VERSION'] = '$XC_VERSION'
   config.build_settings['DEVELOPMENT_TEAM'] = development_team
   config.build_settings['INFOPLIST_FILE'] = "$APP_EXTENSION_NAME/Info.plist"
