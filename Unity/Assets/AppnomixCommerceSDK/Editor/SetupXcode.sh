@@ -561,7 +561,7 @@ require 'plist'
   # Find the Info.plist file in the project directory
   info_plist_path = File.join(project_path, 'Info.plist')
 
-  puts "#{info_plist_path}"
+  puts "Getting extension name from #{info_plist_path}"
 
   # Get bundle display name from the Info.plist file
   if File.exist?(info_plist_path)
@@ -569,7 +569,12 @@ require 'plist'
     
     if plist.key?('CFBundleDisplayName')
       new_extension_name = plist['CFBundleDisplayName']
+      puts "New extension name found #{new_extension_name}"
+    else
+      puts "CFBundleDisplayName not found in #{info_plist_path}"
     end
+  else
+    puts "File not found #{info_plist_path}"
   end
 
   puts "Opening JSON file #{json_path}..."
@@ -583,6 +588,7 @@ require 'plist'
   # Update the extension_name.message value
   if data['extension_name'] && data['extension_name']['message']
     data['extension_name']['message'] = new_extension_name
+    puts "Updating extension name to #{new_extension_name}"
   else
     puts "extension_name or extension_name.message not found in JSON"
     return
@@ -609,6 +615,7 @@ copy_logo_image() {
     local output_image_base_name="$3"
     local sizes=($4)
 
+    echo "Replacing branded logo..."
     for size in "${sizes[@]}"; do
         output_image_path="${output_image_base_path}/${output_image_base_name}-${size}.png"
         sips -z "$size" "$size" "$input_image_path" --out "$output_image_path" > /dev/null 2>&1
