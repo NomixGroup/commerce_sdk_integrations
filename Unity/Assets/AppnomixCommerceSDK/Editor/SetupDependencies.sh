@@ -11,6 +11,21 @@ check_ruby_installed() {
   fi
 }
 
+# ensure required gems are installed
+ensure_gems_installed() {
+  GEMS=("xcodeproj" "plist" "json")
+
+  for GEM in "${GEMS[@]}"; do
+    if gem list -i "$GEM" >/dev/null 2>&1; then
+      echo "Gem '$GEM' is already installed."
+    else
+      echo "Installing gem '$GEM'..."
+      gem install "$GEM"
+      gem install "$GEM" --user-install
+    fi
+  done
+}
+
 # install Ruby on macOS
 install_ruby() {
   echo "Installing Ruby..."
@@ -22,20 +37,12 @@ install_ruby() {
   echo "Ruby installation completed."
 
   # Ensure the required gems are installed
-  GEMS=("xcodeproj" "plist" "json")
-
-  for GEM in "${GEMS[@]}"; do
-    if gem list -i "$GEM" >/dev/null 2>&1; then
-        echo "Gem '$GEM' is already installed."
-    else
-        echo "Installing gem '$GEM'..."
-        gem install "$GEM"
-        gem install "$GEM" --user-install
-    fi
-  done
+  ensure_gems_installed
 }
 
 # Main script logic
-if ! check_ruby_installed; then
+if check_ruby_installed; then
+  ensure_gems_installed
+else
   install_ruby
 fi
