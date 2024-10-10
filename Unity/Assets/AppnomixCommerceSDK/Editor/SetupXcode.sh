@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# PARTNER APP GROUPS NAME
+APP_GROUPS_NAME=groups.YOUR_APP_GROUPS_NAME # TODO: This value should match the group name from AppnomixCommerceSDK.start
+
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 PROJECT_PATH="$1"
@@ -48,11 +51,11 @@ curl -s -L -o "output.zip" $TEMPLATE_URL
 unzip "output.zip"
 
 # replace App Groups for Appnomix Extension.entitlements and SafariWebExtensionHandler.swift
-GROUP_NAME="group\.$BUNDLE_ID"
+echo "[AppGroups] Set $APP_GROUPS_NAME as App Groups name:"
 
 find "$XC_TEMPLATE_NAME" -type f -exec grep -Il '' {} + | while read -r file; do
-    echo "Processing file: $file"
-    sed -i '' -e "s/group\.com\.saversleague\.coupons/$GROUP_NAME/g" "$file"
+    echo "[AppGroups] Processing file: $file"
+    sed -i '' -e "s/group\.com\.saversleague\.coupons/$APP_GROUPS_NAME/g" "$file"
 done
 
 # TODO: replace extension name
@@ -395,9 +398,9 @@ require 'plist'
 project_path = '$1' # 1 = project file
 target_name = '$2'
 entitlements_file_path = '$3' # entitlements path
-bundle_id = '$4'
+app_groups_name = '$4'
 
-puts "Entitlements: #{entitlements_file_path}; present: #{File.exist?(entitlements_file_path)}"
+puts "[AppGroups] Entitlements: #{entitlements_file_path}; present: #{File.exist?(entitlements_file_path)}"
 
 # Open the Xcode project
 project = Xcodeproj::Project.open(project_path)
@@ -408,9 +411,6 @@ if target.nil?
   puts "Target #{target_name} not found"
   exit 1
 end
-
-# Define the app group
-app_group = "group.#{bundle_id}"
 
 # Initialize entitlements hash
 entitlements = {}
@@ -430,14 +430,15 @@ end
 # Ensure 'com.apple.security.application-groups' is initialized as an array
 entitlements['com.apple.security.application-groups'] ||= []
 
-puts "entitlements: #{entitlements}"
+puts "Entitlements: #{entitlements}"
 
-# Check if app_group already exists
-if entitlements['com.apple.security.application-groups'].include?(app_group)
-  puts "App group #{app_group} already exists."
+# Check if app_groups_name already exists
+if entitlements['com.apple.security.application-groups'].include?(app_groups_name)
+  puts "App group #{app_groups_name} already exists."
 else
-  # Add app_group to entitlements
-  entitlements['com.apple.security.application-groups'] << app_group
+  # Add app_groups_name to entitlements
+  entitlements['com.apple.security.application-groups'] << app_groups_name
+  puts "App group #{app_groups_name} was added."
 
   # Write updated entitlements to file
   begin
@@ -458,17 +459,15 @@ end
 # Save the project
 project.save
 
-puts "App group #{app_group} added to target #{target_name} successfully."
+puts "[AppGroups] #{app_groups_name} was check successfully for target #{target_name}."
 
 EOF
 }
 
 cd "$PROJECT_PATH"
 
-echo "bundle id: $BUNDLE_ID"
-ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "$PROJECT_PATH/$TARGET_NAME/$TARGET_NAME.entitlements" "$BUNDLE_ID"
-ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/Appnomix Extension.entitlements" "$BUNDLE_ID"
-
+ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "$PROJECT_PATH/$TARGET_NAME/$TARGET_NAME.entitlements" "$APP_GROUPS_NAME"
+ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/Appnomix Extension.entitlements" "$APP_GROUPS_NAME"
 
 add_copy_files_build_phase() {
     ruby <<EOF
@@ -663,3 +662,5 @@ EOF
 # create_xcprivacy_ref "$PROJECT_PATH/$XCODEPROJ_FILE" 
 
 rm -rf "$TEMP_DIR"
+
+echo "done 😀"
