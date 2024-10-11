@@ -51,9 +51,9 @@ curl -s -L -o "output.zip" $TEMPLATE_URL
 unzip "output.zip"
 
 # replace App Groups for Appnomix Extension.entitlements and SafariWebExtensionHandler.swift
-echo "[AppGroups] Set $APP_GROUPS_NAME as App Groups name:"
+echo "[AppGroups] Set $APP_GROUPS_NAME as App Groups name"
 
-find "$XC_TEMPLATE_NAME" -type f -exec grep -Il '' {} + | while read -r file; do
+find "$XC_TEMPLATE_NAME" -type f -name 'SafariWebExtensionHandler.swift' | while read -r file; do
     echo "[AppGroups] Processing file: $file"
     sed -i '' -e "s/group\.com\.saversleague\.coupons/$APP_GROUPS_NAME/g" "$file"
 done
@@ -395,12 +395,13 @@ ensure_app_groups_exists() {
 require 'xcodeproj'
 require 'plist'
 
-project_path = '$1' # 1 = project file
-target_name = '$2'
+project_path = '$1' # project file
+target_name = '$2' # target name
 entitlements_file_path = '$3' # entitlements path
-app_groups_name = '$4'
+app_groups_name = '$4' # app group name to add
 
-puts "[AppGroups] Entitlements: #{entitlements_file_path}; present: #{File.exist?(entitlements_file_path)}"
+puts ""
+puts "[AppGroups] Starting process for target: #{target_name}"
 
 # Open the Xcode project
 project = Xcodeproj::Project.open(project_path)
@@ -412,54 +413,71 @@ if target.nil?
   exit 1
 end
 
+# Check if CODE_SIGN_ENTITLEMENTS is already set in the build settings
+current_entitlements_file_path = target.build_configurations.first.build_settings['CODE_SIGN_ENTITLEMENTS']
+
+if current_entitlements_file_path.nil? || current_entitlements_file_path.empty?
+  puts "[AppGroups] CODE_SIGN_ENTITLEMENTS not set. Using default path: #{entitlements_file_path}"
+  current_entitlements_file_path = entitlements_file_path
+else
+  puts "[AppGroups] Found existing entitlements file in build settings: #{current_entitlements_file_path}"
+end
+
 # Initialize entitlements hash
 entitlements = {}
 
 # Load entitlements from file if it exists
-if File.exist?(entitlements_file_path)
+if File.exist?(current_entitlements_file_path)
   begin
-    entitlements = Plist.parse_xml(entitlements_file_path)
+    entitlements = Plist.parse_xml(current_entitlements_file_path)
     entitlements ||= {}  # Ensure entitlements is not nil
   rescue StandardError => e
     puts "Error loading entitlements file: #{e.message}"
+    exit 1
   end
 else
-  puts "Entitlements file not found at #{entitlements_file_path}"
+  puts "[AppGroups] Entitlements file not found at #{entitlements_file_path}, creating a new one."
+  current_entitlements_file_path = entitlements_file_path
 end
 
 # Ensure 'com.apple.security.application-groups' is initialized as an array
 entitlements['com.apple.security.application-groups'] ||= []
 
-puts "Entitlements: #{entitlements}"
+puts "[AppGroups] Current entitlements: #{entitlements}"
 
-# Check if app_groups_name already exists
+# Check if app_groups_name already exists in entitlements
 if entitlements['com.apple.security.application-groups'].include?(app_groups_name)
-  puts "App group #{app_groups_name} already exists."
+  puts "[AppGroups] App group #{app_groups_name} already exists in entitlements."
 else
-  # Add app_groups_name to entitlements
+  # Add app_groups_name to the array if it does not exist
   entitlements['com.apple.security.application-groups'] << app_groups_name
-  puts "App group #{app_groups_name} was added."
+  puts "[AppGroups] App group #{app_groups_name} added to entitlements."
 
-  # Write updated entitlements to file
+  # Write the updated entitlements back to the file
   begin
-    File.open(entitlements_file_path, 'w') do |file|
+    File.open(current_entitlements_file_path, 'w') do |file|
       file.write(entitlements.to_plist)
     end
+    puts "[AppGroups] Entitlements successfully updated."
   rescue StandardError => e
     puts "Error writing entitlements file: #{e.message}"
     exit 1
   end
 end
 
-# Ensure the entitlements setting is in the build settings
+puts "[AppGroups] Updated entitlements: #{entitlements}"
+
+# Ensure the entitlements file is set in the build settings if not already set
 target.build_configurations.each do |config|
-  config.build_settings['CODE_SIGN_ENTITLEMENTS'] = entitlements_file_path
+  config.build_settings['CODE_SIGN_ENTITLEMENTS'] = current_entitlements_file_path
+  puts "[AppGroups] CODE_SIGN_ENTITLEMENTS set to: #{current_entitlements_file_path} for configuration: #{config.name}"
 end
 
 # Save the project
 project.save
 
-puts "[AppGroups] #{app_groups_name} was check successfully for target #{target_name}."
+puts "[AppGroups] App group #{app_groups_name} successfully ensured for target #{target_name} to #{current_entitlements_file_path}."
+puts ""
 
 EOF
 }
