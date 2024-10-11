@@ -53,7 +53,7 @@ unzip "output.zip"
 # replace App Groups for Appnomix Extension.entitlements and SafariWebExtensionHandler.swift
 echo "[AppGroups] Set $APP_GROUPS_NAME as App Groups name"
 
-find "$XC_TEMPLATE_NAME" -type f -name 'SafariWebExtensionHandler.swift' | while read -r file; do
+find "$XC_TEMPLATE_NAME" \( -name 'SafariWebExtensionHandler.swift' -o -name 'Appnomix Extension.entitlements' \) -type f | while read -r file; do
     echo "[AppGroups] Processing file: $file"
     sed -i '' -e "s/group\.com\.saversleague\.coupons/$APP_GROUPS_NAME/g" "$file"
 done
