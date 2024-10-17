@@ -9,7 +9,7 @@ PROJECT_PATH="$1"
 XC_TEMPLATE_NAME="Appnomix.Safari.Extension.xctemplate"
 XC_FRAMEWORK_NAME="AppnomixCommerce.xcframework"
 
-XC_VERSION=1.0.5
+XC_VERSION=1.0.6
 
 TEMPLATE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_TEMPLATE_NAME.zip"
 BINARY_SDK_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_FRAMEWORK_NAME.zip"
@@ -108,6 +108,7 @@ add_new_target_with_template() {
     # Use xcodeproj gem to modify the project
     ruby -e "$(cat <<EOF
 require 'xcodeproj'
+require 'plist'
 
 target_name = '$template_target_name'
 extension_name = '$template_target_name Extension'
@@ -138,6 +139,32 @@ if !Dir.exist?(template_dir)
   puts 'Error: Template directory "#{template_dir}" not found.'
   exit 1
 end
+
+
+# versioning - begin
+current_project_version = '$XC_VERSION' # CFBundleVersion 
+marketing_version = '$XC_VERSION' # CFBundleShortVersionString
+
+info_plist_file_setting = template_target.resolved_build_setting('INFOPLIST_FILE')
+info_plist_file = if info_plist_file_setting.is_a?(Hash)
+  info_plist_file_setting['Release'] || info_plist_file_setting.values.first
+else
+  info_plist_file_setting
+end
+
+# Read and parse the Info.plist file
+if info_plist_file.nil? || !File.exist?(info_plist_file)
+  puts 'Error: Info.plist file not found for the target #{target_name}'
+else 
+  # Parse the plist and fetch version
+  plist = Plist.parse_xml(info_plist_file)
+  current_project_version = plist['CFBundleVersion']
+  marketing_version = plist['CFBundleShortVersionString']
+end
+
+puts "[versioning] Found CFBundleVersion: #{current_project_version}, CFBundleShortVersionString: #{marketing_version}"
+# versioning - end
+
 
 # Duplicate the template target to create a new target
 platform_name = template_target.platform_name.to_s.empty? ? :ios : template_target.platform_name.to_sym
@@ -187,7 +214,8 @@ new_target.build_configurations.each do |config|
   config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
   config.build_settings['PRODUCT_NAME'] = extension_name
   config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "$BUNDLE_ID.appnomixextension"
-  config.build_settings['CURRENT_PROJECT_VERSION'] = '$XC_VERSION'
+  config.build_settings['CURRENT_PROJECT_VERSION'] = current_project_version
+  config.build_settings['MARKETING_VERSION'] = marketing_version
   config.build_settings['DEVELOPMENT_TEAM'] = development_team
   config.build_settings['INFOPLIST_FILE'] = "$APP_EXTENSION_NAME/Info.plist"
   config.build_settings['INFOPLIST_KEY_CFBundleDisplayName'] = extension_name
