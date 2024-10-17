@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# PARTNER APP GROUPS NAME
-APP_GROUPS_NAME=groups.YOUR_APP_GROUPS_NAME # TODO: This value should match the group name from AppnomixCommerceSDK.start
+### TODO: This value should correspond to the app group name used in the AppnomixCommerceSDK.start call
+# APP_GROUPS_NAME=group.YOUR_APP_GROUPS_NAME
+
+# Check if APP_GROUPS_NAME is defined and not empty
+if [ -z "$APP_GROUPS_NAME" ]; then
+  echo "Fatal error: App Group is not defined. Ensure that APP_GROUPS_NAME is set to a valid value." >&2
+  exit 1
+fi
+echo "App Group is set to: $APP_GROUPS_NAME"
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -539,31 +546,34 @@ add_copy_files_build_phase() {
 
   # Create a new Copy Files build phase if it doesn't exist
   copy_files_phase = target.build_phases.find { |phase| phase.display_name == build_phase_name }
-  unless copy_files_phase
+  if copy_files_phase
+    puts "Build phase '#{build_phase_name}' already exists"
+  else
     copy_files_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
     copy_files_phase.name = build_phase_name
     copy_files_phase.dst_subfolder_spec = dst_subfolder_spec
     copy_files_phase.dst_path = dst_path
     puts "Created new build phase '#{build_phase_name}'"
-  else
-    puts "Build phase '#{build_phase_name}' already exists"
-    exit 0
+
+    # Add it to the first available position to avoid conflict with Firebase Run Script
+    target.build_phases.unshift(copy_files_phase)
   end
 
   # Add files to the Copy Files build phase
   files.each do |file_path|
     file_ref = project.main_group.find_file_by_path(file_path) || project.main_group.new_file(file_path)
     file_ref.source_tree = 'BUILT_PRODUCTS_DIR'
-    copy_files_phase.add_file_reference(file_ref)
-    puts "Added file #{file_path} to Copy Files build phase."
+    unless copy_files_phase.files_references.include?(file_ref)
+      copy_files_phase.add_file_reference(file_ref)
+      puts "Added file #{file_path} to '#{build_phase_name}' build phase."
+    else
+      puts "File #{file_path} already exists in '#{build_phase_name}' build phase."
+    end
   end
-
-  # Add it to the first available position to avoid conflict with Firebase Run Script
-  target.build_phases.unshift(copy_files_phase)
 
   # Save the project
   project.save
-  puts "Successfully added Copy Files build phase #{build_phase_name} to target #{target_name}."
+  puts "Successfully added Copy Files build phase '#{build_phase_name}' to target #{target_name}."
 
 EOF
 }
