@@ -436,7 +436,7 @@ entitlements_file_path = '$3' # entitlements path
 app_groups_name = '$4' # app group name to add
 
 puts ""
-puts "[AppGroups] Starting process for target: #{target_name}"
+puts "[AppGroups] Start searching CODE_SIGN_ENTITLEMENTS for target: #{target_name}"
 
 # Open the Xcode project
 project = Xcodeproj::Project.open(project_path)
@@ -448,14 +448,24 @@ if target.nil?
   exit 1
 end
 
+current_entitlements_file_path = ''
+
 # Check if CODE_SIGN_ENTITLEMENTS is already set in the build settings
-current_entitlements_file_path = target.build_configurations.first.build_settings['CODE_SIGN_ENTITLEMENTS']
+target.build_configurations.each do |config|
+  current_entitlements_file_path = config.build_settings['CODE_SIGN_ENTITLEMENTS']
+  puts "[AppGroups] Searching in configuration: #{config.name}"
+
+  if current_entitlements_file_path && !current_entitlements_file_path.empty?
+    puts "[AppGroups] Found entitlements file: #{current_entitlements_file_path} in configuration: #{config.name}"
+    break
+  end
+end
 
 if current_entitlements_file_path.nil? || current_entitlements_file_path.empty?
-  puts "[AppGroups] CODE_SIGN_ENTITLEMENTS not set. Using default path: #{entitlements_file_path}"
   current_entitlements_file_path = entitlements_file_path
+  puts "[AppGroups] CODE_SIGN_ENTITLEMENTS not set. Using default path: #{current_entitlements_file_path}"
 else
-  puts "[AppGroups] Found existing entitlements file in build settings: #{current_entitlements_file_path}"
+  
 end
 
 # Initialize entitlements hash
@@ -471,7 +481,7 @@ if File.exist?(current_entitlements_file_path)
     exit 1
   end
 else
-  puts "[AppGroups] Entitlements file not found at #{entitlements_file_path}, creating a new one."
+  puts "[AppGroups] Entitlements file not found at #{current_entitlements_file_path}, creating a new one."
   current_entitlements_file_path = entitlements_file_path
 end
 
