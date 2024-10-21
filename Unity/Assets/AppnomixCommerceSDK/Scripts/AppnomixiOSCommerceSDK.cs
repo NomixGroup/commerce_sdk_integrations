@@ -18,7 +18,7 @@ namespace AppnomixCommerce
             bool requestTracking);
 
         [DllImport("__Internal")]
-        private static extern void AppnomixCommerceSDK_showOnboarding();
+        private static extern void AppnomixCommerceSDK_showOnboarding(OnboardingEventCallback callback = null);
 
         [DllImport("__Internal")]
         private static extern bool AppnomixCommerceSDK_isExtensionInstalled();
@@ -68,14 +68,13 @@ namespace AppnomixCommerce
             }
         }
 
-        public void LaunchOnboarding()
+        public void LaunchOnboarding(OnboardingEventCallback callback = null)
         {
-            Debug.Log("LaunchOnboarding");
             try
             {
                 if (!IsOnboardingDone())
                 {
-                    AppnomixCommerceSDK_showOnboarding();
+                    AppnomixCommerceSDK_showOnboarding(callback);
                 }
             }
             catch (System.Exception e)

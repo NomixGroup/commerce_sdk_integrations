@@ -1,10 +1,16 @@
 using UnityEngine;
+using System.Runtime.InteropServices;
+using System;
+
 
 namespace AppnomixCommerce
 {
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void OnboardingEventCallback(IntPtr eventStr);
+
     public interface IAppnomixCommerceSDK
     {
-        void LaunchOnboarding();
+        void LaunchOnboarding(OnboardingEventCallback callback = null);
 
         bool IsOnboardingDone();
     }
@@ -40,9 +46,9 @@ namespace AppnomixCommerce
 #endif
         }
 
-        public void LaunchOnboarding()
+        public void LaunchOnboarding(OnboardingEventCallback callback = null)
         {
-            sdkWrapper?.LaunchOnboarding();
+            sdkWrapper?.LaunchOnboarding(callback);
         }
 
         public bool IsOnboardingDone()
