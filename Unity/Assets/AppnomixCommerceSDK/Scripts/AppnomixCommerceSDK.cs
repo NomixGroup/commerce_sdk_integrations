@@ -6,11 +6,11 @@ using System;
 namespace AppnomixCommerce
 {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void OnboardingEventCallback(IntPtr eventStr);
+    public delegate void AnalyticsEventCallback(IntPtr eventStr);
 
     public interface IAppnomixCommerceSDK
     {
-        void LaunchOnboarding(OnboardingEventCallback callback = null);
+        void LaunchOnboarding(AnalyticsEventCallback callback = null);
 
         bool IsOnboardingDone();
     }
@@ -46,7 +46,7 @@ namespace AppnomixCommerce
 #endif
         }
 
-        public void LaunchOnboarding(OnboardingEventCallback callback = null)
+        public void LaunchOnboarding(AnalyticsEventCallback callback = null)
         {
             sdkWrapper?.LaunchOnboarding(callback);
         }
