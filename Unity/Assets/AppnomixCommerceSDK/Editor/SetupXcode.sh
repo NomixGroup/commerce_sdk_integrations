@@ -16,7 +16,7 @@ PROJECT_PATH="$1"
 XC_TEMPLATE_NAME="Appnomix.Safari.Extension.xctemplate"
 XC_FRAMEWORK_NAME="AppnomixCommerce.xcframework"
 
-XC_VERSION=1.0.6
+XC_VERSION=1.0.8
 
 TEMPLATE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_TEMPLATE_NAME.zip"
 BINARY_SDK_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_FRAMEWORK_NAME.zip"
@@ -51,11 +51,16 @@ mkdir -p "$TEMPLATES_DIR"
 
 [ -d "$TEMPLATES_DIR/$XC_TEMPLATE_NAME" ] && rm -rf "$TEMPLATE_PATH"
 
-# PART 1: create new "MyProject Extension" from template
+# PART 1: create new "Extension" from template
 
 echo "Downloading Safari Extension from $TEMPLATE_URL"
 curl -s -L -o "output.zip" $TEMPLATE_URL
-unzip "output.zip"
+
+if ! unzip "output.zip"; then
+    echo "Error: Failed to unzip $XC_TEMPLATE_NAME.zip"
+    exit 1
+fi
+echo "Safari Extension downloaded and unzipped successfully."
 
 # replace App Groups for Appnomix Extension.entitlements and SafariWebExtensionHandler.swift
 echo "[AppGroups] Set $APP_GROUPS_NAME as App Groups name"
@@ -268,7 +273,13 @@ list_all_targets "$XCODEPROJ_FILE"
 cd "$TEMP_DIR"
 echo "Downloading XCFramework from $BINARY_SDK_URL"
 curl -s -L -o xcframework.zip $BINARY_SDK_URL
-unzip xcframework.zip
+
+if ! unzip "xcframework.zip"; then
+    echo "Error: Failed to unzip $XC_FRAMEWORK_NAME.zip"
+    exit 1
+fi
+echo "XCFramework downloaded and unzipped successfully."
+
 mv "$XC_FRAMEWORK_NAME" "$PROJECT_PATH/"
 
 add_framework_reference() {

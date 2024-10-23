@@ -38,7 +38,7 @@ namespace AppnomixCommerce
             }
         }
 
-        public void LaunchOnboarding()
+        public void LaunchOnboarding(AnalyticsEventCallback callback = null)
         {
             string facadeClassName = "app.appnomix.sdk.external.CouponsSdkFacade";
             try
