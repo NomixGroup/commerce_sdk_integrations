@@ -5,8 +5,17 @@ using System;
 
 namespace AppnomixCommerce
 {
+    public enum AnalyticsEvent
+    {
+        Show = 10,
+        GetStarted = 20,
+        YesPlease = 30,
+        SkipForNow = 40,
+        ExtensionActivated = 50
+    }
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void AnalyticsEventCallback(IntPtr eventStr);
+    public delegate void AnalyticsEventCallback(int eventValue);
 
     public interface IAppnomixCommerceSDK
     {
