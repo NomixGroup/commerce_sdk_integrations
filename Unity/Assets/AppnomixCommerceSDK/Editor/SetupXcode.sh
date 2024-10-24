@@ -540,8 +540,8 @@ EOF
 
 cd "$PROJECT_PATH"
 
-ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "$PROJECT_PATH/$TARGET_NAME/$TARGET_NAME.entitlements" "$APP_GROUPS_NAME"
-ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/Appnomix Extension.entitlements" "$APP_GROUPS_NAME"
+ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "$TARGET_NAME/$TARGET_NAME.entitlements" "$APP_GROUPS_NAME"
+ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$APP_EXTENSION_NAME/Appnomix Extension.entitlements" "$APP_GROUPS_NAME"
 
 add_copy_files_build_phase() {
     ruby <<EOF
