@@ -15,7 +15,7 @@ namespace AppnomixCommerce
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void AnalyticsEventCallback(int eventValue);
+    public delegate void AnalyticsEventCallback(long eventValue);
 
     public interface IAppnomixCommerceSDK
     {
