@@ -16,7 +16,7 @@ PROJECT_PATH="$1"
 XC_TEMPLATE_NAME="Appnomix.Safari.Extension.xctemplate"
 XC_FRAMEWORK_NAME="AppnomixCommerce.xcframework"
 
-XC_VERSION=1.0.9
+XC_VERSION=1.1.2
 
 TEMPLATE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_TEMPLATE_NAME.zip"
 BINARY_SDK_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_FRAMEWORK_NAME.zip"
@@ -67,14 +67,8 @@ echo "[AppGroups] Set $APP_GROUPS_NAME as App Groups name"
 
 find "$XC_TEMPLATE_NAME" \( -name 'SafariWebExtensionHandler.swift' -o -name 'Appnomix Extension.entitlements' \) -type f | while read -r file; do
     echo "[AppGroups] Processing file: $file"
-    sed -i '' -e "s/group\.com\.saversleague\.coupons/$APP_GROUPS_NAME/g" "$file"
+    sed -i '' -e "s/group\.YOUR_APP_GROUPS_NAME/$APP_GROUPS_NAME/g" "$file"
 done
-
-# TODO: replace extension name
-# find "$XC_TEMPLATE_NAME" -type f -exec grep -Il '' {} + | while read -r file; do
-#     echo "Processing file: $file"
-#     sed -i '' -e "s/group\.com\.saversleague\.coupons/$TARGET_NAME/g" "$file"
-# done
 
 mv "$XC_TEMPLATE_NAME" "$TEMPLATES_DIR/"
 mkdir -p "$APP_EXTENSION_DIR_PATH"
@@ -308,10 +302,24 @@ target_names.each do |target_name|
   target = project.targets.find { |t| t.name == target_name }
   if target
     unless target.frameworks_build_phase.files_references.include?(framework_ref)
-      target.frameworks_build_phase.add_file_reference(framework_ref)
+      file_ref = target.frameworks_build_phase.add_file_reference(framework_ref)
       puts "Added framework reference to target: #{target_name}"
     else
       puts "Framework reference already exists in target: #{target_name}"
+    end
+
+    # Embed and sign the framework
+    embed_phase = target.copy_files_build_phases.find { |phase| phase.name == 'Embed Frameworks' } ||
+                  target.new_copy_files_build_phase('Embed Frameworks')
+
+    embed_phase.symbol_dst_subfolder_spec = :frameworks # Embed frameworks into the Frameworks folder
+
+    unless embed_phase.files_references.include?(framework_ref)
+      build_file = embed_phase.add_file_reference(framework_ref)
+      build_file.settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
+      puts "Embedded and set CodeSignOnCopy for framework in target: #{target_name}"
+    else
+      puts "Framework already embedded and signed in target: #{target_name}"
     end
   else
     puts "Target not found: #{target_name}"
@@ -325,7 +333,7 @@ EOF
 }
 
 add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "$XC_FRAMEWORK_NAME" "$APP_EXTENSION_NAME" "UnityFramework"
-
+add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "$XC_FRAMEWORK_NAME" "$APP_EXTENSION_NAME" "$TARGET_NAME"
 
 add_swift_to_UnityFramework() {
     project_path="$1"
