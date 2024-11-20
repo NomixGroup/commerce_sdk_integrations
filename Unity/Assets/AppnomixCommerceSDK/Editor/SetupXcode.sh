@@ -332,8 +332,7 @@ project.save
 EOF
 }
 
-add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "$XC_FRAMEWORK_NAME" "$APP_EXTENSION_NAME" "UnityFramework"
-add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "$XC_FRAMEWORK_NAME" "$APP_EXTENSION_NAME" "$TARGET_NAME"
+add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "$XC_FRAMEWORK_NAME" "$APP_EXTENSION_NAME" "UnityFramework" "$TARGET_NAME"
 
 add_swift_to_UnityFramework() {
     project_path="$1"
