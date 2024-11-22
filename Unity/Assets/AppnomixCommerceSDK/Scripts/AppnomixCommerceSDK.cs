@@ -7,9 +7,9 @@ namespace AppnomixCommerce
 {
     public enum AnalyticsEvent
     {
-        onboardingStarted = 1001,
-        onboardingDropout = 1002,
-        onboardingCompleted = 1003
+        OnboardingStarted = 1001,
+        OnboardingDropout = 1002,
+        OnboardingCompleted = 1003
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
