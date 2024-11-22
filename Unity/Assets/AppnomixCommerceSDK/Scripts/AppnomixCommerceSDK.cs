@@ -7,11 +7,9 @@ namespace AppnomixCommerce
 {
     public enum AnalyticsEvent
     {
-        Show = 10,
-        GetStarted = 20,
-        YesPlease = 30,
-        SkipForNow = 40,
-        ExtensionActivated = 50
+        OnboardingStarted = 1001,
+        OnboardingDropout = 1002,
+        OnboardingCompleted = 1003
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
