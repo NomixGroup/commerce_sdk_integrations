@@ -23,6 +23,9 @@ namespace AppnomixCommerce
         [DllImport("__Internal")]
         private static extern bool AppnomixCommerceSDK_isExtensionInstalled();
 
+        [DllImport("__Internal")]
+        private static extern void AppnomixCommerceSDK_trackOfferDisplay(string context);
+
         private readonly string clientID;
         private readonly string authToken;
         private readonly string appGroupName;
@@ -87,6 +90,11 @@ namespace AppnomixCommerce
         {
             return AppnomixCommerceSDK_isExtensionInstalled();
         }
+
+        public void TrackOfferDisplay(string context)
+        {
+            AppnomixCommerceSDK_trackOfferDisplay(context);
+        }    
     }
 }
 

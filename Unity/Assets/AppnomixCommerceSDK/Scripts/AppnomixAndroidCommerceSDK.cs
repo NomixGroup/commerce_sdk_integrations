@@ -72,5 +72,11 @@ namespace AppnomixCommerce
                 return false;
             }
         }
+
+        public void TrackOfferDisplay(string context)
+        {
+            // TODO: call SDK implementation
+        }    
+
     }
 }
