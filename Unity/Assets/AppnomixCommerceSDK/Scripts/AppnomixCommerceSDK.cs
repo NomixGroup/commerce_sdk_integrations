@@ -20,6 +20,8 @@ namespace AppnomixCommerce
         void LaunchOnboarding(AnalyticsEventCallback callback = null);
 
         bool IsOnboardingDone();
+
+        void TrackOfferDisplay(string context);
     }
 
     public class AppnomixCommerceSDK
@@ -61,6 +63,11 @@ namespace AppnomixCommerce
         public bool IsOnboardingDone()
         {
             return sdkWrapper?.IsOnboardingDone() ?? false;
+        }
+
+        public void TrackOfferDisplay(string context)
+        {
+            sdkWrapper?.TrackOfferDisplay(context);
         }
     }
 }
