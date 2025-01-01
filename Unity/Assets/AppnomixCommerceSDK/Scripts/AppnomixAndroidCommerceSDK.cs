@@ -38,6 +38,21 @@ namespace AppnomixCommerce
             }
         }
 
+        public void TrackOfferDisplay(string context)  
+        {
+            string facadeClassName = "app.appnomix.sdk.external.CouponsSdkFacade";
+            try
+            {
+                AndroidJavaClass couponsSdkFacade = new AndroidJavaClass(facadeClassName);
+                AndroidJavaObject sdkFacadeInstance = couponsSdkFacade.GetStatic<AndroidJavaObject>("INSTANCE");
+                sdkFacadeInstance.Call("trackOfferDisplay", context);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Failed to track offer display analytics: " + e.Message);
+            }
+        }
+
         public void LaunchOnboarding(AnalyticsEventCallback callback = null)
         {
             string facadeClassName = "app.appnomix.sdk.external.CouponsSdkFacade";
