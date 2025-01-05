@@ -78,10 +78,12 @@ namespace AppnomixCommerceSDK.Editor
         {
             if (target == BuildTarget.Android)
             {
-                UpdateGradleProperties(pathToBuiltProject);
-                UpdateGradleWrapper(pathToBuiltProject);
-                UpdateGradleBuildFiles(pathToBuiltProject, "8.1.0", 35, "35.0.0");
-                AddAppnomixDependency(pathToBuiltProject);
+                int lastIndex = pathToBuiltProject.LastIndexOf("/");
+                string buildFolderPath = pathToBuiltProject.Substring(0, lastIndex);
+                UpdateGradleProperties(buildFolderPath);
+                UpdateGradleWrapper(buildFolderPath);
+                UpdateGradleBuildFiles(buildFolderPath, "8.1.0", 35, "35.0.0");
+                AddAppnomixDependency(buildFolderPath);
             }
         }
 
