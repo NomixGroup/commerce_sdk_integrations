@@ -15,9 +15,11 @@ namespace AppnomixCommerceSDK.Editor
         [PostProcessBuild]
         public static void OnPostProcessBuild(BuildTarget target, string pathToBuiltProject)
         {
-            Debug.Log("Running Appnomix PostProcessBuild script");
-            IOSPostProcessBuild(target, pathToBuiltProject);
-            AndroidOnPostProcessBuild(target, pathToBuiltProject);
+            if (Directory.Exists(pathToBuiltProject)) {
+                Debug.Log("Running Appnomix PostProcessBuild script");
+                IOSPostProcessBuild(target, pathToBuiltProject);
+                AndroidOnPostProcessBuild(target, pathToBuiltProject);
+            }
         }
 
         private static void IOSPostProcessBuild(BuildTarget target, string pathToBuiltProject)
@@ -91,6 +93,27 @@ namespace AppnomixCommerceSDK.Editor
             if (File.Exists(gradlePropertiesPath))
             {
                 string content = File.ReadAllText(gradlePropertiesPath);
+
+				string java17Path = Java17Finder.FindJava17Path();
+                if (string.IsNullOrEmpty(java17Path))
+                {
+                    Debug.LogError("Java 17 not found. Please install Java 17 and try again.");
+                    return;
+                }
+
+				Debug.Log($"Using Java 17 path: {java17Path}");
+
+				if (content.Contains("org.gradle.java.home"))
+                {
+                    content = Regex.Replace(content, @"org\.gradle\.java\.home=.*", $"org.gradle.java.home={java17Path}");
+                }
+                else
+                {
+                    content += $"\norg.gradle.java.home={java17Path}\n";
+                }             
+
+                File.WriteAllText(gradlePropertiesPath, content);
+                Debug.Log("Updated gradle.properties with org.gradle.java.home.");
 
                 if (!content.Contains("org.gradle.jvmargs"))
                 {
