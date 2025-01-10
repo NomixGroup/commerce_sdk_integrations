@@ -1,15 +1,16 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
+using AppnomixCommerceSDK.Scripts;
 
 
 namespace AppnomixCommerce
 {
-    public enum AnalyticsEvent
+    public enum AnalyticsEvent : long
     {
-        OnboardingStarted = 1001,
-        OnboardingDropout = 1002,
-        OnboardingCompleted = 1003
+        OnboardingStarted = 1001L,
+        OnboardingDropout = 1002L,
+        OnboardingCompleted = 1003L
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
