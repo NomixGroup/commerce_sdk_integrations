@@ -73,10 +73,19 @@ namespace AppnomixCommerce
             }
         }
 
-        public void TrackOfferDisplay(string context)
+        public void TrackOfferDisplay(string context)  
         {
-            // TODO: call SDK implementation
-        }    
-
+            string facadeClassName = "app.appnomix.sdk.external.CouponsSdkFacade";
+            try
+            {
+                AndroidJavaClass couponsSdkFacade = new AndroidJavaClass(facadeClassName);
+                AndroidJavaObject sdkFacadeInstance = couponsSdkFacade.GetStatic<AndroidJavaObject>("INSTANCE");
+                sdkFacadeInstance.Call("trackOfferDisplay", context);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Failed to track offer display analytics: " + e.Message);
+            }
+        }
     }
 }
