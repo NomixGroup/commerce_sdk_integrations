@@ -4,7 +4,7 @@ apply from: '../shared/keepUnitySymbols.gradle'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'app.appnomix:sdk:1.1.1'
+    implementation 'app.appnomix:sdk:1.2.1'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 **DEPS**}
 
