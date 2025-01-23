@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
 
-namespace AppnomixCommerce
+namespace AppnomixCommerceSDK.Scripts
 {
     public class AppnomixiOSCommerceSDK : IAppnomixCommerceSDK
     {

@@ -4,7 +4,7 @@ using System;
 using AppnomixCommerceSDK.Scripts;
 
 
-namespace AppnomixCommerce
+namespace AppnomixCommerceSDK.Scripts
 {
     public enum AnalyticsEvent : long
     {
@@ -25,11 +25,11 @@ namespace AppnomixCommerce
         void TrackOfferDisplay(string context);
     }
 
-    public class AppnomixCommerceSDK
+    public class AppnomixCommerceSDKWrapper
     {
         private readonly IAppnomixCommerceSDK sdkWrapper;
 
-        public AppnomixCommerceSDK(
+        public AppnomixCommerceSDKWrapper(
             string clientID,
             string authToken,
             string iOSAppGroupName, // e.g. group.app.appnomix.demo-unity

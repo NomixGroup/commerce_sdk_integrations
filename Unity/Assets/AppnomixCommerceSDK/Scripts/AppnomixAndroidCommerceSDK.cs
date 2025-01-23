@@ -1,4 +1,4 @@
-using AppnomixCommerce;
+using AppnomixCommerceSDK.Scripts;
 using UnityEngine;
 
 namespace AppnomixCommerceSDK.Scripts
