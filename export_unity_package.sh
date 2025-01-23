@@ -12,14 +12,20 @@ PACKAGE_NAME="unity-1.3.unitypackage"  # name of the package
 EXPORT_PATH="$SCRIPT_DIR/build"     # Set the directory to export the package
 
 # Asset folders (one per line)
-ASSETS_TO_EXPORT="Assets/AppnomixCommerceSDK Assets/Plugins/Android"
+ASSETS_TO_EXPORT=(
+  "Assets/AppnomixCommerceSDK"
+  "Assets/Plugins/Android"
+)
+
+# Join the assets array into a space-separated string
+ASSETS_STRING="${ASSETS_TO_EXPORT[@]}"
 
 # Create export directory
 mkdir -p "$EXPORT_PATH"
 
 # Export package
 echo "Exporting Unity package..."
-"$UNITY_PATH" -batchmode -nographics -quit -projectPath "$PROJECT_PATH" -exportPackage $ASSETS_TO_EXPORT "$EXPORT_PATH/$PACKAGE_NAME"
+"$UNITY_PATH" -batchmode -nographics -quit -projectPath "$PROJECT_PATH" -exportPackage $ASSETS_STRING "$EXPORT_PATH/$PACKAGE_NAME"
 
 # Check if the export was successful
 if [ $? -eq 0 ]; then
