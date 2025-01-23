@@ -14,7 +14,6 @@ EXPORT_PATH="$SCRIPT_DIR/build"     # Set the directory to export the package
 # Asset folders (one per line)
 ASSETS_TO_EXPORT=(
   "Assets/AppnomixCommerceSDK"
-  "Assets/Plugins/Android"
 )
 
 # Join the assets array into a space-separated string
