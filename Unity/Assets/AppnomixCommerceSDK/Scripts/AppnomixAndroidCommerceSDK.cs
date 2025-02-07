@@ -1,8 +1,25 @@
+using System;
+using System.Threading;
 using AppnomixCommerceSDK.Scripts;
 using UnityEngine;
 
 namespace AppnomixCommerceSDK.Scripts
 {
+    public class AppnomixThreadHelper : MonoBehaviour
+    {
+        private static SynchronizationContext unityContext;
+
+        private void Awake()
+        {
+            unityContext = SynchronizationContext.Current;
+        }
+
+        public static void RunOnMainThread(Action action)
+        {
+            unityContext?.Post(_ => action(), null);
+        }
+    }
+
     public class AppnomixEventListenerProxy : AndroidJavaProxy
     {
         private readonly AnalyticsEventCallback _eventsDelegate;
@@ -18,24 +35,27 @@ namespace AppnomixCommerceSDK.Scripts
             string eventName = eventObj.Call<string>("name");
             Debug.Log($"Received event: {eventName}");
 
-            switch (eventName)
+            AppnomixThreadHelper.RunOnMainThread(() =>
             {
-                case "ONBOARDING_STARTED":
-                    Debug.Log("Onboarding started");
-                    _eventsDelegate((long)AnalyticsEvent.OnboardingStarted);
-                    break;
-                case "ONBOARDING_ABANDONED":
-                    Debug.Log("Onboarding abandoned");
-                    _eventsDelegate((long)AnalyticsEvent.OnboardingDropout);
-                    break;
-                case "ONBOARDING_FINISHED":
-                    Debug.Log("Onboarding finished");
-                    _eventsDelegate((long)AnalyticsEvent.OnboardingCompleted);
-                    break;
-                default:
-                    Debug.Log("Unknown event received");
-                    break;
-            }
+                switch (eventName)
+                {
+                    case "ONBOARDING_STARTED":
+                        Debug.Log("Onboarding started");
+                        _eventsDelegate((long)AnalyticsEvent.OnboardingStarted);
+                        break;
+                    case "ONBOARDING_ABANDONED":
+                        Debug.Log("Onboarding abandoned");
+                        _eventsDelegate((long)AnalyticsEvent.OnboardingDropout);
+                        break;
+                    case "ONBOARDING_FINISHED":
+                        Debug.Log("Onboarding finished");
+                        _eventsDelegate((long)AnalyticsEvent.OnboardingCompleted);
+                        break;
+                    default:
+                        Debug.Log("Unknown event received");
+                        break;
+                }
+            });
         }
     }
 
@@ -106,7 +126,7 @@ namespace AppnomixCommerceSDK.Scripts
             }
         }
 
-        public void TrackOfferDisplay(string context)  
+        public void TrackOfferDisplay(string context)
         {
             try
             {
@@ -115,6 +135,7 @@ namespace AppnomixCommerceSDK.Scripts
             catch (System.Exception e)
             {
                 Debug.LogError("Failed to track offer display analytics: " + e.Message);
-            }}
+            }
+        }
     }
 }
