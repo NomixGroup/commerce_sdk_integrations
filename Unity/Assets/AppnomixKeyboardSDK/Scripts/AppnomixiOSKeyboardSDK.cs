@@ -14,7 +14,7 @@ namespace AppnomixKeyboardSDK.Scripts
         //     string appGroupName);
 
         // [DllImport("__Internal")]
-        // private static extern void AppnomixKeyboardSDK_showOnboarding(AnalyticsEventCallback callback = null);
+        // private static extern void AppnomixKeyboardSDK_showOnboarding();
 
         private readonly string clientID;
         private readonly string authToken;
