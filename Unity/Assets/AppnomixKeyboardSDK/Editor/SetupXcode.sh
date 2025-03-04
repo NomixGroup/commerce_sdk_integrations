@@ -9,10 +9,12 @@ source "$(dirname "$0")/SetupXCode/xcode_framework.sh"
 source "$(dirname "$0")/SetupXCode/xcode_app_groups.sh"
 source "$(dirname "$0")/SetupXCode/xcode_update_main.sh"
 source "$(dirname "$0")/SetupXCode/xcode_get_bundle_name.sh"
+source "$(dirname "$0")/SetupXCode/xcode_get_project_versions.sh"
 source "$(dirname "$0")/SetupXCode/xcode_files_to_compile.sh"
 source "$(dirname "$0")/SetupXCode/xcode_add_permissions.sh"
 source "$(dirname "$0")/SetupXCode/xcode_update_content_view.sh"
 source "$(dirname "$0")/SetupXCode/xcode_update_keyboard_content.sh"
+
 
 ### TODO: These values should be set by the client
 APP_GROUPS_NAME=group.app.appnomix.demo-unity
@@ -92,9 +94,15 @@ cd "$PROJECT_PATH"
 # cleanup
 rm -rf "$TEMP_DIR"
 
+# Get project versions
+VERSION_OUTPUT=$(get_project_versions "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME")
+# Extract values
+export PROJECT_VERSION=$(echo "$VERSION_OUTPUT" | grep "PROJECT_VERSION=" | cut -d '=' -f2)
+export MARKETING_VERSION=$(echo "$VERSION_OUTPUT" | grep "MARKETING_VERSION=" | cut -d '=' -f2)
+
 # Add Keyboard target
 echo "**Step: add_custom_keyboard_extension_target"
-add_custom_keyboard_extension_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/" "$TARGET_NAME"
+add_custom_keyboard_extension_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/" "$TARGET_NAME" "$PROJECT_VERSION" "$MARKETING_VERSION"
 echo "**Step: add_copy_files_build_phase"
 add_copy_files_build_phase "$XCODEPROJ_FILE" "$TARGET_NAME" "Embed Foundation Extensions" '13' "" "['$APP_EXTENSION_NAME.appex']"
 
