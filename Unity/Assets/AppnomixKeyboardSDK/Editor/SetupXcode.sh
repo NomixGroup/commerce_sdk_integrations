@@ -34,7 +34,7 @@ echo "Using Xcode version: $XCODE_VERSION"
 
 # Find the .xcodeproj file in the current directory
 XCODEPROJ_FILE=$(find . -name "*.xcodeproj" -maxdepth 1 -type d)
-BUNDLE_ID=$(xcodebuild -showBuildSettings | awk '/PRODUCT_BUNDLE_IDENTIFIER/ { print $3 }')
+BUNDLE_ID=$(xcodebuild -showBuildSettings | grep -w PRODUCT_BUNDLE_IDENTIFIER | awk '{ print $3 }')
 TARGET_NAME=$(basename "$XCODEPROJ_FILE" .xcodeproj)
 echo "Found TARGET_NAME=$TARGET_NAME"
 echo "Found BUNDLE_ID=$BUNDLE_ID"
@@ -87,7 +87,7 @@ rm -rf "$TEMP_DIR"
 
 # Add Keyboard target
 add_custom_keyboard_extension_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/"
-#add_copy_files_build_phase "$XCODEPROJ_FILE" "$TARGET_NAME" "Embed Foundation Extensions" '13' "" "['$APP_EXTENSION_NAME.appex']"
+add_copy_files_build_phase "$XCODEPROJ_FILE" "$TARGET_NAME" "Embed Foundation Extensions" '13' "" "['$APP_EXTENSION_NAME.appex']"
 
 # Add files
 add_xcassets_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "Appnomix.xcassets"
