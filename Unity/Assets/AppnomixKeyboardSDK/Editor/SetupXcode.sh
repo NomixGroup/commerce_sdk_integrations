@@ -28,7 +28,9 @@ fi
 echo "App Group is set to: $APP_GROUPS_NAME"
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
 PROJECT_PATH="$1"
+
 TEMPLATE_URL="https://github.com/NomixGroup/Appnomix-Unity-Sample/releases/download/test/Appnomix.Keyboard.Resources.zip"
 
 cd "$PROJECT_PATH"
@@ -91,37 +93,49 @@ cd "$PROJECT_PATH"
 rm -rf "$TEMP_DIR"
 
 # Add Keyboard target
-add_custom_keyboard_extension_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/"
+echo "**Step: add_custom_keyboard_extension_target"
+add_custom_keyboard_extension_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/" "$TARGET_NAME"
+echo "**Step: add_copy_files_build_phase"
 add_copy_files_build_phase "$XCODEPROJ_FILE" "$TARGET_NAME" "Embed Foundation Extensions" '13' "" "['$APP_EXTENSION_NAME.appex']"
 
 # Add files
+echo "**Step: add_xcassets_to_target"
 add_xcassets_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "Appnomix.xcassets"
+echo "**Step: add_files_to_target"
 add_files_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "Unity-iPhone" "MainApp" "$PROJECT_PATH/MainApp"
+echo "**Step: add_file_to_compile_sources"
 add_file_to_compile_sources "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/MainApp/TypeProSharedSettingsKeys.swift"
 
 # Add frameworks
+echo "**Step: add_framework_reference"
 add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "AppnomixSDK.xcframework" "$APP_EXTENSION_NAME" "$TARGET_NAME"
 add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "KeyboardAI.xcframework" "$APP_EXTENSION_NAME" "$TARGET_NAME"
 add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "KeyboardSDK.xcframework" "$APP_EXTENSION_NAME" "$TARGET_NAME"
 add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "KeyboardView.xcframework" "$APP_EXTENSION_NAME" "$TARGET_NAME"
 
 # Configure App Groups
+echo "**Step: ensure_app_groups_exists"
 ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "$TARGET_NAME/$TARGET_NAME.entitlements" "$APP_GROUPS_NAME"
 ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$APP_EXTENSION_NAME/Appnomix Extension.entitlements" "$APP_GROUPS_NAME"
 
-# Add NSUserTrackingUsageDescription to Info.plist
-add_privacy_permissions "$PROJECT_PATH/$XCODEPROJ_FILE"
-
 # Update main.mm
+echo "**Step: update_main_mm"
 update_main_mm "$PROJECT_PATH/MainApp/main.mm" "$BUNDLE_NAME"
 
+# Add NSUserTrackingUsageDescription to Info.plist
+echo "**Step: add_privacy_permissions"
+add_privacy_permissions "$PROJECT_PATH/$XCODEPROJ_FILE"
+
 # Update ContentView.Swift
+echo "**Step: update_content_view_file"
 update_content_view_file "$PROJECT_PATH/MainApp/ContentView.swift"
 
 # Update KeyboardContentView.swift
+echo "**Step: update_keyboard_content_file"
 update_keyboard_content_file "$PROJECT_PATH/$APP_EXTENSION_NAME/KeyboardViewController.swift"
 
 # Function to list all targets in the project using xcodeproj gem
+echo "**Step: list_all_targets"
 list_all_targets() {
   ruby - <<EOF
 require 'xcodeproj'

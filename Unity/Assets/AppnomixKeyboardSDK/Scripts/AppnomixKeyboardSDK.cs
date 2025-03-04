@@ -1,3 +1,5 @@
+using Debug = UnityEngine.Debug;
+
 namespace AppnomixKeyboardSDK.Scripts
 {
     public interface IAppnomixKeyboardSDK
