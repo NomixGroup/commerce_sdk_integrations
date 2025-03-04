@@ -7,6 +7,7 @@ source "$(dirname "$0")/SetupXCode/xcode_files_to_target.sh"
 source "$(dirname "$0")/SetupXCode/xcode_files_build_phase.sh"
 source "$(dirname "$0")/SetupXCode/xcode_framework.sh"
 source "$(dirname "$0")/SetupXCode/xcode_app_groups.sh"
+source "$(dirname "$0")/SetupXCode/xcode_update_main.sh"
 
 ### TODO: This value should correspond to the app group name used in the AppnomixKeyboardSDK.start call
 APP_GROUPS_NAME=group.app.appnomix.demo-unity
@@ -97,6 +98,10 @@ add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "KeyboardView.xcframewor
 # Configure App Groups
 ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "$TARGET_NAME/$TARGET_NAME.entitlements" "$APP_GROUPS_NAME"
 ensure_app_groups_exists "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$APP_EXTENSION_NAME/Appnomix Extension.entitlements" "$APP_GROUPS_NAME"
+
+# Update main.mm
+update_main_mm "$PROJECT_PATH/MainApp/main.mm"
+
 
 # Function to list all targets in the project using xcodeproj gem
 list_all_targets() {
