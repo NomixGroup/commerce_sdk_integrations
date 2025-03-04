@@ -9,6 +9,8 @@ source "$(dirname "$0")/SetupXCode/xcode_framework.sh"
 source "$(dirname "$0")/SetupXCode/xcode_app_groups.sh"
 source "$(dirname "$0")/SetupXCode/xcode_update_main.sh"
 source "$(dirname "$0")/SetupXCode/xcode_get_bundle_name.sh"
+source "$(dirname "$0")/SetupXCode/xcode_files_to_compile.sh"
+
 
 ### TODO: This value should correspond to the app group name used in the AppnomixKeyboardSDK.start call
 APP_GROUPS_NAME=group.app.appnomix.demo-unity
@@ -92,6 +94,7 @@ add_copy_files_build_phase "$XCODEPROJ_FILE" "$TARGET_NAME" "Embed Foundation Ex
 # Add files
 add_xcassets_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "Appnomix.xcassets"
 add_files_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "Unity-iPhone" "MainApp" "$PROJECT_PATH/MainApp"
+add_file_to_compile_sources "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/MainApp/TypeProSharedSettingsKeys.swift"
 
 # Add frameworks
 add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "AppnomixSDK.xcframework" "$APP_EXTENSION_NAME" "$TARGET_NAME"
