@@ -12,12 +12,13 @@ source "$(dirname "$0")/SetupXCode/xcode_get_bundle_name.sh"
 source "$(dirname "$0")/SetupXCode/xcode_files_to_compile.sh"
 source "$(dirname "$0")/SetupXCode/xcode_add_permissions.sh"
 source "$(dirname "$0")/SetupXCode/xcode_update_content_view.sh"
+source "$(dirname "$0")/SetupXCode/xcode_update_keyboard_content.sh"
 
-
-### TODO: This value should correspond to the app group name used in the AppnomixKeyboardSDK.start call
+### TODO: These values should be set by the client
 APP_GROUPS_NAME=group.app.appnomix.demo-unity
 YOUR_CLIENT_ID=your-client
 YOUR_AUTH_TOKEN=your-auth-token
+YOUR_APP_SCHEME=your-app-scheme
 
 # Check if APP_GROUPS_NAME is defined and not empty
 if [ -z "$APP_GROUPS_NAME" ]; then
@@ -27,9 +28,7 @@ fi
 echo "App Group is set to: $APP_GROUPS_NAME"
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-
 PROJECT_PATH="$1"
-
 TEMPLATE_URL="https://github.com/NomixGroup/Appnomix-Unity-Sample/releases/download/test/Appnomix.Keyboard.Resources.zip"
 
 cd "$PROJECT_PATH"
@@ -118,6 +117,9 @@ update_main_mm "$PROJECT_PATH/MainApp/main.mm" "$BUNDLE_NAME"
 
 # Update ContentView.Swift
 update_content_view_file "$PROJECT_PATH/MainApp/ContentView.swift"
+
+# Update KeyboardContentView.swift
+update_keyboard_content_file "$PROJECT_PATH/$APP_EXTENSION_NAME/KeyboardViewController.swift"
 
 # Function to list all targets in the project using xcodeproj gem
 list_all_targets() {
