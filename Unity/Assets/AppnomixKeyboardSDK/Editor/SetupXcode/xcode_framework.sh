@@ -20,13 +20,7 @@ target_names = $target_names_ruby # Names of the targets
 # Open the Xcode project
 project = Xcodeproj::Project.open(project_path)
 
-# Ensure 'Frameworks' group exists
-frameworks_group = project.groups.find { |group| group.display_name == 'Frameworks' }
-frameworks_group ||= project.main_group.new_group('Frameworks')  # Create if missing
-
-# Find or create a framework reference
-framework_path = File.join(File.dirname(project_path), xcframework_name)
-framework_ref = frameworks_group.find_file_by_path(framework_path) || frameworks_group.new_reference(framework_path)
+framework_ref = project.frameworks_group.find_file_by_path(xcframework_name) || project.frameworks_group.new_reference(xcframework_name)
 
 target_names.each do |target_name|
   target = project.targets.find { |t| t.name == target_name }
