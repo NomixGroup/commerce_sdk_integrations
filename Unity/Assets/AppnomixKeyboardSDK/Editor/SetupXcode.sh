@@ -11,10 +11,13 @@ source "$(dirname "$0")/SetupXCode/xcode_update_main.sh"
 source "$(dirname "$0")/SetupXCode/xcode_get_bundle_name.sh"
 source "$(dirname "$0")/SetupXCode/xcode_files_to_compile.sh"
 source "$(dirname "$0")/SetupXCode/xcode_add_permissions.sh"
+source "$(dirname "$0")/SetupXCode/xcode_update_content_view.sh"
 
 
 ### TODO: This value should correspond to the app group name used in the AppnomixKeyboardSDK.start call
 APP_GROUPS_NAME=group.app.appnomix.demo-unity
+YOUR_CLIENT_ID=your-client
+YOUR_AUTH_TOKEN=your-auth-token
 
 # Check if APP_GROUPS_NAME is defined and not empty
 if [ -z "$APP_GROUPS_NAME" ]; then
@@ -112,6 +115,9 @@ add_privacy_permissions "$PROJECT_PATH/$XCODEPROJ_FILE"
 
 # Update main.mm
 update_main_mm "$PROJECT_PATH/MainApp/main.mm" "$BUNDLE_NAME"
+
+# Update ContentView.Swift
+update_content_view_file "$PROJECT_PATH/MainApp/ContentView.swift"
 
 # Function to list all targets in the project using xcodeproj gem
 list_all_targets() {

@@ -50,7 +50,7 @@ end
 # Ensure the file is added to Compile Sources (PBXSourcesBuildPhase)
 source_build_phase = target.source_build_phase
 if source_build_phase.files_references.include?(file_ref)
-  puts "⚠️ File '#{file_name}' is already in Compile Sources."
+  puts "File '#{file_name}' is already in Compile Sources."
 else
   source_build_phase.add_file_reference(file_ref)
   puts "Added '#{file_name}' to Compile Sources in target '#{target_name}'."
