@@ -102,6 +102,6 @@ end
 # copy_phase.files << build_file
 
 project.save
-puts "Added new custom keyboard extension target: \#{new_target.name}"
+puts "Added new custom keyboard extension target: #{new_target.name}"
 EOF
 }
