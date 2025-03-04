@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### TODO: This value should correspond to the app group name used in the AppnomixKeyboardSDK.start call
-APP_GROUPS_NAME=group.YOUR_APP_GROUPS_NAME
+APP_GROUPS_NAME=group.app.appnomix.demo-unity
 
 # Check if APP_GROUPS_NAME is defined and not empty
 if [ -z "$APP_GROUPS_NAME" ]; then
@@ -59,6 +59,8 @@ echo "Appnomix Keyboard Resources are downloaded and unzipped successfully."
 mkdir -p "$APP_EXTENSION_DIR_PATH"
 cp -R "$TEMP_DIR/Appnomix Keyboard Resources/Appnomix Keyboard/"/* "$APP_EXTENSION_DIR_PATH"
 cp -R "$TEMP_DIR/Appnomix Keyboard Resources/Appnomix Frameworks/"/* "$PROJECT_PATH"
+mkdir -p "$PROJECT_PATH/Appnomix.xcassets"
+cp -R "$TEMP_DIR/Appnomix Keyboard Resources/Appnomix.xcassets/"/* "$PROJECT_PATH/Appnomix.xcassets"
 cd "$PROJECT_PATH"
 
 # cleanup
@@ -170,6 +172,64 @@ puts "Added new custom keyboard extension target: \#{new_target.name}"
 EOF
 }
 add_custom_keyboard_extension_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/"
+
+
+add_xcassets_to_target() {
+  if [ "$#" -ne 3 ]; then
+    echo "Usage: add_xcassets_to_target <path_to_xcodeproj> <target_name> <xcassets_path>"
+    return 1
+  fi
+
+  local XCODEPROJ_PATH="$1"
+  local TARGET_NAME="$2"
+  local XCASSETS_PATH="$3"
+
+  ruby <<EOF
+require 'xcodeproj'
+
+project_path = "$XCODEPROJ_PATH"
+target_name = "$TARGET_NAME"
+xcassets_path = "$XCASSETS_PATH"
+xcassets_group_name = "$XCASSETS_PATH"
+
+# Open the Xcode project
+project = Xcodeproj::Project.open(project_path)
+
+# Find the target
+target = project.targets.find { |t| t.name == target_name }
+if target.nil?
+  puts "Error: Target '#{target_name}' not found."
+  exit 1
+end
+
+# Ensure the xcassets folder exists
+unless File.exist?(xcassets_path)
+  puts "Error: xcassets folder '#{xcassets_path}' not found."
+  exit 1
+end
+
+# Get or create a group specifically for Appnomix.xcassets under the main project structure
+xcassets_group = project.main_group.find_subpath(xcassets_group_name, true)
+xcassets_group.set_source_tree('<group>')
+
+# Add xcassets reference inside the group
+xcassets_ref = xcassets_group.find_file_by_path(File.basename(xcassets_path)) || xcassets_group.new_reference(xcassets_path)
+
+# Add the xcassets reference to the resources build phase
+unless target.resources_build_phase.files_references.include?(xcassets_ref)
+  target.resources_build_phase.add_file_reference(xcassets_ref)
+  puts "Added xcassets folder 'Appnomix.xcassets' to target: #{target_name}"
+else
+  puts "xcassets folder already exists in target: #{target_name}"
+end
+
+# Save changes
+project.save
+puts "Updated project file successfully."
+EOF
+}
+add_xcassets_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "Appnomix.xcassets"
+
 
 
 # Function to list all targets in the project using xcodeproj gem
