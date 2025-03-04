@@ -66,9 +66,13 @@ echo "Appnomix Keyboard Resources are downloaded and unzipped successfully."
 # Copy all files and folders to the project folder
 mkdir -p "$APP_EXTENSION_DIR_PATH"
 cp -R "$TEMP_DIR/Appnomix Keyboard Resources/Appnomix Keyboard/"/* "$APP_EXTENSION_DIR_PATH"
-cp -R "$TEMP_DIR/Appnomix Keyboard Resources/Appnomix Frameworks/"/* "$PROJECT_PATH"
+
+mkdir -p "$PROJECT_PATH/Frameworks"
+cp -R "$TEMP_DIR/Appnomix Keyboard Resources/Appnomix Frameworks/"/* "$PROJECT_PATH/Frameworks"
+
 mkdir -p "$PROJECT_PATH/Appnomix.xcassets"
-cp -R "$TEMP_DIR/Appnomix Keyboard Resources/Appnomix.xcassets/"/* "$PROJECT_PATH/Appnomix.xcassets"
+cp -R "$TEMP_DIR/Appnomix Keyboard Resources/MainApp/Appnomix.xcassets/"/* "$PROJECT_PATH/Appnomix.xcassets"
+
 cp -R "$TEMP_DIR/Appnomix Keyboard Resources/MainApp/"/* "$PROJECT_PATH/MainApp"
 
 cd "$PROJECT_PATH"
@@ -78,7 +82,7 @@ rm -rf "$TEMP_DIR"
 
 # Add Keyboard target
 add_custom_keyboard_extension_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$APP_EXTENSION_NAME" "$PROJECT_PATH/$APP_EXTENSION_NAME/"
-add_copy_files_build_phase "$XCODEPROJ_FILE" "$TARGET_NAME" "Embed Foundation Extensions" '13' "" "['$APP_EXTENSION_NAME.appex']"
+#add_copy_files_build_phase "$XCODEPROJ_FILE" "$TARGET_NAME" "Embed Foundation Extensions" '13' "" "['$APP_EXTENSION_NAME.appex']"
 
 # Add files
 add_xcassets_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "Appnomix.xcassets"
