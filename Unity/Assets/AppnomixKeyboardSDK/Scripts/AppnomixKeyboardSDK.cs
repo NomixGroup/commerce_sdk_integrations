@@ -11,17 +11,10 @@ namespace AppnomixKeyboardSDK.Scripts
     {
         private readonly IAppnomixKeyboardSDK sdkWrapper;
 
-        public AppnomixKeyboardSDKWrapper(
-            string clientID = null,
-            string authToken = null,
-            string iOSAppGroupName = null)
+        public AppnomixKeyboardSDKWrapper()
         {
 #if UNITY_IOS
-            sdkWrapper = new AppnomixiOSKeyboardSDK(
-                            clientID,
-                            authToken,
-                            iOSAppGroupName
-                        );
+            sdkWrapper = new AppnomixiOSKeyboardSDK();
 #elif UNITY_ANDROID
             sdkWrapper = new AppnomixAndroidKeyboardSDK();
 #else
