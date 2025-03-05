@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### TODO: This value should correspond to the app group name used in the AppnomixCommerceSDK.start call
-# APP_GROUPS_NAME=group.YOUR_APP_GROUPS_NAME
+APP_GROUPS_NAME=group.YOUR_APP_GROUPS_NAME
 
 # Check if APP_GROUPS_NAME is defined and not empty
 if [ -z "$APP_GROUPS_NAME" ]; then
@@ -30,7 +30,7 @@ echo "Using Xcode version: $XCODE_VERSION"
 
 # Find the .xcodeproj file in the current directory
 XCODEPROJ_FILE=$(find . -name "*.xcodeproj" -maxdepth 1 -type d)
-BUNDLE_ID=$(xcodebuild -showBuildSettings | awk '/PRODUCT_BUNDLE_IDENTIFIER/ { print $3 }')
+BUNDLE_ID=$(xcodebuild -showBuildSettings | grep -w PRODUCT_BUNDLE_IDENTIFIER | awk '{ print $3 }')
 TARGET_NAME=$(basename "$XCODEPROJ_FILE" .xcodeproj)
 echo "Found TARGET_NAME=$TARGET_NAME"
 echo "Found BUNDLE_ID=$BUNDLE_ID"
@@ -274,7 +274,8 @@ if ! unzip "xcframework.zip"; then
 fi
 echo "XCFramework downloaded and unzipped successfully."
 
-mv "$XC_FRAMEWORK_NAME" "$PROJECT_PATH/"
+mkdir -p "$PROJECT_PATH/Frameworks"
+mv "$XC_FRAMEWORK_NAME" "$PROJECT_PATH/Frameworks/"
 
 add_framework_reference() {
     project_path="$1"
