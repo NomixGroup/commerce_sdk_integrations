@@ -16,7 +16,7 @@ PROJECT_PATH="$1"
 XC_TEMPLATE_NAME="Appnomix.Safari.Extension.xctemplate"
 XC_FRAMEWORK_NAME="AppnomixCommerce.xcframework"
 
-XC_VERSION=1.3
+XC_VERSION=1.4
 
 TEMPLATE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_TEMPLATE_NAME.zip"
 BINARY_SDK_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_FRAMEWORK_NAME.zip"
@@ -76,6 +76,9 @@ cp "$TEMPLATE_PATH/Appnomix Extension.entitlements" "$APP_EXTENSION_DIR_PATH/"
 cp "$TEMPLATE_PATH"/*.swift "$APP_EXTENSION_DIR_PATH/"
 cp "$TEMPLATE_PATH/Info.plist" "$APP_EXTENSION_DIR_PATH/Info.plist"
 cp -r "$TEMPLATE_PATH/Resources" "$APP_EXTENSION_DIR_PATH/"
+
+# Copy customization file for colors
+cp "$SCRIPT_DIR/../Resources/AppnomixCustomizationPoints.json" "$PROJECT_PATH"
 
 cd "$PROJECT_PATH"
 
@@ -389,6 +392,61 @@ EOF
 # commenting out because Unity automatically add the swift file into the Libraries/AppnomixCommerceSDK folder
 # add Appnomix.swift file to UnityFramework to avoid lib compatibility issues
 #add_swift_to_UnityFramework "$PROJECT_PATH/$XCODEPROJ_FILE" "UnityFramework" "$SCRIPT_DIR/../" "$PROJECT_PATH/UnityFramework" "Appnomix.swift"
+
+add_resource_file_to_target() {
+
+  local XCODEPROJ_PATH="$1"
+  local TARGET_NAME="$2"
+  local FILE_PATH="$3"
+
+  # Ensure the file exists
+  if [ ! -f "$FILE_PATH" ]; then
+    echo "Error: File '$FILE_PATH' not found."
+    return 1
+  fi
+
+  echo "Adding file: $FILE_PATH to target: $TARGET_NAME under the main group"
+
+  ruby <<EOF
+require 'xcodeproj'
+
+project_path = "$XCODEPROJ_PATH"
+target_name = "$TARGET_NAME"
+file_path = "$FILE_PATH"
+file_name = File.basename(file_path)
+
+# Open the Xcode project
+project = Xcodeproj::Project.open(project_path)
+
+# Find the target
+target = project.targets.find { |t| t.name == target_name }
+if target.nil?
+  puts "Error: Target '#{target_name}' not found."
+  exit 1
+end
+
+# Use the main project group
+main_group = project.main_group
+
+# Check if the file is already in the project
+file_ref = main_group.find_file_by_path(file_name) || main_group.new_reference(file_path)
+
+# Ensure the file is added to the target's source build phase
+unless target.resources_build_phase.files_references.include?(file_ref)
+  target.add_resources([file_ref])
+  puts "Added file: '#{file_name}' to the main group under target: '#{target_name}'"
+else
+  puts "File '#{file_name}' already exists in the target."
+end
+
+# Save changes
+project.save
+puts "Xcode project updated successfully."
+
+EOF
+}
+
+add_resource_file_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "$PROJECT_PATH/AppnomixCustomizationPoints.json"
 
 # PART 3: add NSUserTrackingUsageDescription, NSLocationAlwaysUsageDescription, NSLocationWhenInUseUsageDescription to Info.plist
 add_privacy_permissions() {
