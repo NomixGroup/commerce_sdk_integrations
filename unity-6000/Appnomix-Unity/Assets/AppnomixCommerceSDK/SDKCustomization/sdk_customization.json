@@ -1,0 +1,168 @@
+{
+  "schema_version": "1",
+  "ui_styling": {
+    "dark_styling": {
+      "button_primary_back_color": {
+        "type": "gradient",
+        "colors": {
+          "type": "linear",
+          "stops": [
+            {
+              "hex": "#F26419",
+              "location": 0
+            },
+            {
+              "hex": "#F24419",
+              "location": 1
+            }
+          ],
+          "start_point": {
+            "x": 0.25,
+            "y": 0.5
+          },
+          "end_point": {
+            "x": 0.75,
+            "y": 0.5
+          }
+        }
+      },     
+      "button_primary_text_color": {
+        "type": "solid",
+        "hex": "#FFFFFF"
+      },
+      "button_secondary_back_color": {
+        "type": "solid",
+        "hex": "#FFFFFF"
+      },
+      "button_secondary_text_color": {
+        "type": "solid",
+        "hex": "#060416"
+      },
+      "button_tertiary_text_color": {
+        "type": "solid",
+        "hex": "#F26419"
+      },
+      "accent_color": {
+        "type": "solid",
+        "hex": "#F26419"
+      },
+      "illustration_color": {
+        "type": "gradient",
+        "colors": {
+          "type": "linear",
+          "stops": [
+            {
+              "hex": "#E7C072",
+              "location": 0
+            },
+            {
+              "hex": "#FFF2CB",
+              "location": 1
+            }
+          ],
+          "start_point": {
+            "x": 0.25,
+            "y": 0.5
+          },
+          "end_point": {
+            "x": 0.75,
+            "y": 0.5
+          }
+        }
+      },
+      "illustration_shadow": {
+        "hex": "#FFC400",
+        "radius": 44,
+        "point": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    "light_styling": {
+      "button_primary_back_color": {
+        "type": "gradient",
+        "colors": {
+          "type": "linear",
+          "stops": [
+            {
+              "hex": "#F26419",
+              "location": 0
+            },
+            {
+              "hex": "#F24419",
+              "location": 1
+            }
+          ],
+          "start_point": {
+            "x": 0.25,
+            "y": 0.5
+          },
+          "end_point": {
+            "x": 0.75,
+            "y": 0.5
+          }
+        }
+      },     
+      "button_primary_text_color": {
+        "type": "solid",
+        "hex": "#FFFFFF"
+      },
+      "button_secondary_back_color": {
+        "type": "solid",
+        "hex": "#FFFFFF"
+      },
+      "button_secondary_text_color": {
+        "type": "solid",
+        "hex": "#060416"
+      },
+      "button_tertiary_text_color": {
+        "type": "solid",
+        "hex": "#F26419"
+      },
+      "accent_color": {
+        "type": "solid",
+        "hex": "#F26419"
+      },
+      "illustration_color": {
+        "type": "gradient",
+        "colors": {
+          "type": "linear",
+          "stops": [
+            {
+              "hex": "#E7C072",
+              "location": 0
+            },
+            {
+              "hex": "#C29F34",
+              "location": 1
+            }
+          ],
+          "start_point": {
+            "x": 0.25,
+            "y": 0.5
+          },
+          "end_point": {
+            "x": 0.75,
+            "y": 0.5
+          }
+        }
+      },
+      "illustration_shadow": {
+        "hex": "#FFC400",
+        "radius": 44,
+        "point": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    }
+  },
+  "shape_styling": {
+    "button_primary_radius": 16,
+    "button_secondary_radius": 16
+  },
+  "content": {
+    "program_name": ""
+  }
+}
