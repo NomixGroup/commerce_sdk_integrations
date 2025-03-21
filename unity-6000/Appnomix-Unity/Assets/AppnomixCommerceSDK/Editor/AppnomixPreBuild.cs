@@ -16,7 +16,7 @@ namespace AppnomixCommerceSDK.Editor
             string jsonContent = "";
 
             Debug.Log("AppnomixCommerceSDK.Editor.OnPreprocessBuild");
-            string jsonPath = Path.Combine(Application.dataPath, "AppnomixCommerceSDK/SDKCUstomization/sdk_customization.json");
+            string jsonPath = Path.Combine(Application.dataPath, "AppnomixCommerceSDK/Resources/AppnomixCustomizationPoints.json");
             if (File.Exists(jsonPath))
             {
                 Debug.Log("SDKCUstomization.json exists. Running in customized mode.");
