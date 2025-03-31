@@ -77,9 +77,6 @@ cp "$TEMPLATE_PATH"/*.swift "$APP_EXTENSION_DIR_PATH/"
 cp "$TEMPLATE_PATH/Info.plist" "$APP_EXTENSION_DIR_PATH/Info.plist"
 cp -r "$TEMPLATE_PATH/Resources" "$APP_EXTENSION_DIR_PATH/"
 
-# Copy customization file for colors
-cp "$SCRIPT_DIR/../Resources/AppnomixCustomizationPoints.json" "$PROJECT_PATH"
-
 cd "$PROJECT_PATH"
 
 # Check if exactly one .xcodeproj file was found
@@ -446,9 +443,16 @@ puts "Xcode project updated successfully."
 EOF
 }
 
-add_resource_file_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "$PROJECT_PATH/AppnomixCustomizationPoints.json"
+# Copy customization file for colors
+JSON_FILE_SOURCE="$SCRIPT_DIR/../Resources/AppnomixCustomizationPoints.json"
+if [ -f "$JSON_FILE_SOURCE" ]; then
+  cp "$JSON_FILE_SOURCE" "$PROJECT_PATH"
+  add_resource_file_to_target "$PROJECT_PATH/$XCODEPROJ_FILE" "$TARGET_NAME" "$PROJECT_PATH/AppnomixCustomizationPoints.json"
+else
+  echo "AppnomixCustomizationPoints.json file not found. Skipping customization."
+fi
 
-# PART 3: add NSUserTrackingUsageDescription, NSLocationAlwaysUsageDescription, NSLocationWhenInUseUsageDescription to Info.plist
+# add NSUserTrackingUsageDescription to Info.plist
 add_privacy_permissions() {
     ruby <<EOF
 require 'xcodeproj'
@@ -473,24 +477,6 @@ project_path = '$1' # project path
       File.write(info_plist_path, plist.to_plist)
       puts "Added NSUserTrackingUsageDescription to #{info_plist_path}"
     end
-
-    # NSLocationWhenInUseUsageDescription
-    if plist.key?('NSLocationWhenInUseUsageDescription')
-      puts "NSLocationWhenInUseUsageDescription is already defined: [#{plist['NSLocationWhenInUseUsageDescription']}]"
-    else
-      plist['NSLocationWhenInUseUsageDescription'] = "Find exclusive deals and discounts in your area"
-      File.write(info_plist_path, plist.to_plist)
-      puts "Added NSLocationWhenInUseUsageDescription to #{info_plist_path}"
-    end
-
-    # NSLocationAlwaysUsageDescription
-    if plist.key?('NSLocationAlwaysUsageDescription')
-      puts "NSLocationAlwaysUsageDescription is already defined: [#{plist['NSLocationAlwaysUsageDescription']}]"
-    else
-      plist['NSLocationAlwaysUsageDescription'] = "Find exclusive deals and discounts in your area"
-      File.write(info_plist_path, plist.to_plist)
-      puts "Added NSLocationAlwaysUsageDescription to #{info_plist_path}"
-    end
   else
     puts "Error: Info.plist file not found at #{info_plist_path}"
     exit 1
@@ -501,7 +487,7 @@ EOF
 
 add_privacy_permissions "$PROJECT_PATH/$XCODEPROJ_FILE"
 
-# PART 4: app groups
+# app groups
 ensure_app_groups_exists() {
     ruby <<EOF
 require 'xcodeproj'
@@ -667,7 +653,7 @@ EOF
 
 add_copy_files_build_phase "$XCODEPROJ_FILE" "$TARGET_NAME" "Embed Foundation Extensions" '13' "" "['$APP_EXTENSION_NAME.appex']"
 
-# PART 5: add xcprivacy
+# add xcprivacy
 privacy_info_content=$(cat <<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
