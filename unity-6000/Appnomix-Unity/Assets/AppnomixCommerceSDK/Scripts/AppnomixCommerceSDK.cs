@@ -37,7 +37,9 @@ namespace AppnomixCommerceSDK.Scripts
             bool requestLocation,
             bool requestTracking)
         {
-#if UNITY_IOS
+#if UNITY_EDITOR
+            sdkWrapper = new AppnomixEditorCommerceSDK();
+#elif UNITY_IOS
             sdkWrapper = new AppnomixiOSCommerceSDK(
                             clientID,
                             authToken,
