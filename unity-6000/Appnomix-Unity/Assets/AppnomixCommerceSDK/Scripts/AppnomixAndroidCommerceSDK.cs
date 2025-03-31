@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace AppnomixCommerceSDK.Scripts
 {
+#if UNITY_ANDROID
     public class AppnomixEventListenerProxy : AndroidJavaProxy
     {
         private readonly AnalyticsEventCallback _eventsDelegate;
@@ -126,4 +127,5 @@ namespace AppnomixCommerceSDK.Scripts
             }
         }
     }
+#endif
 }
