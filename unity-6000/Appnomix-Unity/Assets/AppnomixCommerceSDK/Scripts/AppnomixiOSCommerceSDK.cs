@@ -1,10 +1,9 @@
-#if UNITY_IOS
-
 using UnityEngine;
 using System.Runtime.InteropServices;
 
 namespace AppnomixCommerceSDK.Scripts
-{
+{ 
+#if UNITY_IOS
     public class AppnomixiOSCommerceSDK : IAppnomixCommerceSDK
     {
         [DllImport("__Internal")]
@@ -96,6 +95,5 @@ namespace AppnomixCommerceSDK.Scripts
             AppnomixCommerceSDK_trackOfferDisplay(context);
         }    
     }
-}
-
 #endif
+}
