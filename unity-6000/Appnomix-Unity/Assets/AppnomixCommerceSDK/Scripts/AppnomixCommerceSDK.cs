@@ -27,7 +27,6 @@ namespace AppnomixCommerceSDK.Scripts
 
     public class AppnomixCommerceSDKWrapper
     {
-        // TODO - placehodler for PR creation
         private readonly IAppnomixCommerceSDK sdkWrapper;
         
         public AppnomixCommerceSDKWrapper(
@@ -36,7 +35,8 @@ namespace AppnomixCommerceSDK.Scripts
             string iOSAppGroupName, // e.g. group.app.appnomix.demo-unity
             string iOSAppURLScheme, // e.g. savers-league-coupons://
             bool requestLocation,
-            bool requestTracking)
+            bool requestTracking,
+            string language)
         {
 #if UNITY_EDITOR
             sdkWrapper = new AppnomixEditorCommerceSDK();
@@ -52,7 +52,8 @@ namespace AppnomixCommerceSDK.Scripts
 #elif UNITY_ANDROID
             sdkWrapper = new AppnomixAndroidCommerceSDK(
                             clientID,
-                            authToken
+                            authToken,
+                            language
                         );
 #else
             Debug.LogError("Unsupported platform");

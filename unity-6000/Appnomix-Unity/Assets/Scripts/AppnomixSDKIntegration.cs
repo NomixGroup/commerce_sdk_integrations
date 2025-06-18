@@ -25,7 +25,8 @@ public class AppnomixSDKIntegration : MonoBehaviour
             "group.app.appnomix.SampleApplication", // iOSAppGroupName (e.g. group.app.appnomix.demo-unity)
             "sample-application://", // iOSAppURLScheme (e.g. savers-league-coupons://)
             true, // requestLocation
-            true // requestTracking
+            true, // requestTracking
+            "en" // language
         );
     }
 
