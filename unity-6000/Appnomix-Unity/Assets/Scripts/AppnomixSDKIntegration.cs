@@ -26,7 +26,7 @@ public class AppnomixSDKIntegration : MonoBehaviour
             "sample-application://", // iOSAppURLScheme (e.g. savers-league-coupons://)
             true, // requestLocation
             true, // requestTracking
-            "en" // language
+            "" // language: empty string for system default language
         );
     }
 
