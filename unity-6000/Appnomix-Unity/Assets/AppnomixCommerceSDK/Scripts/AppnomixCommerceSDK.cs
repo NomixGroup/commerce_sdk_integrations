@@ -27,8 +27,9 @@ namespace AppnomixCommerceSDK.Scripts
 
     public class AppnomixCommerceSDKWrapper
     {
+        // TODO - placehodler for PR creation
         private readonly IAppnomixCommerceSDK sdkWrapper;
-
+        
         public AppnomixCommerceSDKWrapper(
             string clientID,
             string authToken,
