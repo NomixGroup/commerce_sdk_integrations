@@ -47,7 +47,8 @@ namespace AppnomixCommerceSDK.Scripts
                             iOSAppGroupName,
                             iOSAppURLScheme,
                             requestLocation,
-                            requestTracking
+                            requestTracking,
+                            language
                         );
 #elif UNITY_ANDROID
             sdkWrapper = new AppnomixAndroidCommerceSDK(
