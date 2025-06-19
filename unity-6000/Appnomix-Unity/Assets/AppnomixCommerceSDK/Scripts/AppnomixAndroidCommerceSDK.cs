@@ -44,15 +44,18 @@ namespace AppnomixCommerceSDK.Scripts
     {
         private readonly string _clientID;
         private readonly string _authToken;
+        private readonly string _language;
         private readonly AndroidJavaObject _couponsSdkFacade;
 
         public AppnomixAndroidCommerceSDK(
             string clientID,
-            string authToken
+            string authToken,
+            string language
         )
         {
             _clientID = clientID;
             _authToken = authToken;
+            _language = language;
 
             using (var sdkClass = new AndroidJavaClass("app.appnomix.sdk.external.CouponsSdkFacade"))
             {
@@ -67,7 +70,9 @@ namespace AppnomixCommerceSDK.Scripts
             string configClassName = "app.appnomix.sdk.external.CouponsSdkFacade$Config";
             try
             {
-                AndroidJavaObject configInstance = new AndroidJavaObject(configClassName, _authToken, _clientID);
+                // TODO - fix this in SDK
+                string language = _language == "" ? null : _language;
+                AndroidJavaObject configInstance = new AndroidJavaObject(configClassName, _authToken, _clientID, language);
 
                 _couponsSdkFacade.Call("setup", configInstance);
             }
