@@ -70,7 +70,9 @@ namespace AppnomixCommerceSDK.Scripts
             string configClassName = "app.appnomix.sdk.external.CouponsSdkFacade$Config";
             try
             {
-                AndroidJavaObject configInstance = new AndroidJavaObject(configClassName, _authToken, _clientID, _language);
+                // TODO - fix this in SDK
+                string language = _language == "" ? null : _language;
+                AndroidJavaObject configInstance = new AndroidJavaObject(configClassName, _authToken, _clientID, language);
 
                 _couponsSdkFacade.Call("setup", configInstance);
             }
