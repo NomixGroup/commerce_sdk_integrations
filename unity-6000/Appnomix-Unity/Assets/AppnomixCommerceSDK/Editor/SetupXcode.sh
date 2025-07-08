@@ -19,8 +19,7 @@ XC_FRAMEWORK_NAME="AppnomixCommerce.xcframework"
 XC_VERSION=1.7.3
 
 TEMPLATE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_TEMPLATE_NAME.zip"
-BINARY_SDK_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_FRAMEWORK_NAME.zip"
-TEMPLATE_IDENTIFIER="app.appnomix.dt.unit.iosSafariExtension"
+SWIFT_PACKAGE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary"
 
 cd "$PROJECT_PATH"
 
@@ -50,8 +49,6 @@ TEMPLATE_PATH="$TEMPLATES_DIR/$XC_TEMPLATE_NAME"
 mkdir -p "$TEMPLATES_DIR"
 
 [ -d "$TEMPLATES_DIR/$XC_TEMPLATE_NAME" ] && rm -rf "$TEMPLATE_PATH"
-
-# PART 1: create new "Extension" from template
 
 echo "Downloading Safari Extension from $TEMPLATE_URL"
 curl -s -L -o "output.zip" $TEMPLATE_URL
@@ -263,77 +260,94 @@ EOF
 add_new_target_with_template "$XCODEPROJ_FILE" "$TARGET_NAME" "$APP_EXTENSION_DIR_PATH"
 list_all_targets "$XCODEPROJ_FILE"
 
-# PART 2: add the xcframework
-cd "$TEMP_DIR"
-echo "Downloading XCFramework from $BINARY_SDK_URL"
-curl -s -L -o xcframework.zip $BINARY_SDK_URL
+# Example Usage:
+# link_swift_package_binary_to_target "Demo SwiftUI.xcodeproj" "https://github.com/NomixGroup/ios_commerce_sdk_binary" "AppnomixCommerce" "Demo SwiftUI" "1.4"
+link_swift_package_binary_to_target() {
+    local XCODEPROJ_PATH="$1"
+    local PACKAGE_URL="$2"
+    local PRODUCT_NAME="$3"
+    local TARGET_NAME="$4"
+    local EXACT_VERSION="$5"
 
-if ! unzip "xcframework.zip"; then
-    echo "Error: Failed to unzip $XC_FRAMEWORK_NAME.zip"
-    exit 1
-fi
-echo "XCFramework downloaded and unzipped successfully."
+    # Ensure the version format is correct (e.g., "1.4" -> "1.4.0")
+    if [[ "$EXACT_VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
+        EXACT_VERSION="${EXACT_VERSION}.0"
+    fi
 
-mkdir -p "$PROJECT_PATH/Frameworks"
-mv "$XC_FRAMEWORK_NAME" "$PROJECT_PATH/Frameworks/"
+    echo "Linking remote Swift package at '$PACKAGE_URL' ($PRODUCT_NAME) ($EXACT_VERSION) to target '$TARGET_NAME' in project '$XCODEPROJ_PATH'..."
 
-add_framework_reference() {
-    project_path="$1"
-    xcframework_name="$2"
-    shift 2
-    target_names=("$@")
-
-    # convert the target names array into a Ruby-friendly string
-    target_names_ruby=$(printf "'%s', " "${target_names[@]}")
-    target_names_ruby="[${target_names_ruby%, }]"
-
-    ruby - <<EOF
+    ruby <<EOF
 require 'xcodeproj'
 
-project_path = '$project_path' # First argument is the path to .xcodeproj file
-xcframework_name = '$xcframework_name' # Name of the xcframework file
-target_names = $target_names_ruby # Names of the targets
+project_path = "$XCODEPROJ_PATH"
+package_url = "$PACKAGE_URL"
+product_name = "$PRODUCT_NAME"
+target_name = "$TARGET_NAME"
+exact_version = "$EXACT_VERSION"
 
 # Open the Xcode project
 project = Xcodeproj::Project.open(project_path)
 
-framework_ref = project.frameworks_group.find_file_by_path(xcframework_name) || project.frameworks_group.new_reference(xcframework_name)
-
-target_names.each do |target_name|
-  target = project.targets.find { |t| t.name == target_name }
-  if target
-    unless target.frameworks_build_phase.files_references.include?(framework_ref)
-      file_ref = target.frameworks_build_phase.add_file_reference(framework_ref)
-      puts "Added framework reference to target: #{target_name}"
-    else
-      puts "Framework reference already exists in target: #{target_name}"
-    end
-
-    # Embed and sign the framework
-    embed_phase = target.copy_files_build_phases.find { |phase| phase.name == 'Embed Frameworks' } ||
-                  target.new_copy_files_build_phase('Embed Frameworks')
-
-    embed_phase.symbol_dst_subfolder_spec = :frameworks # Embed frameworks into the Frameworks folder
-
-    unless embed_phase.files_references.include?(framework_ref)
-      build_file = embed_phase.add_file_reference(framework_ref)
-      build_file.settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
-      puts "Embedded and set CodeSignOnCopy for framework in target: #{target_name}"
-    else
-      puts "Framework already embedded and signed in target: #{target_name}"
-    end
-  else
-    puts "Target not found: #{target_name}"
-  end
+# Find the target
+target = project.targets.find { |t| t.name == target_name }
+if target.nil?
+  puts "Target '#{target_name}' not found!"
+  exit 1
 end
 
-# Save the project file
-project.save
+# Ensure package references exist
+project.root_object.attributes["PackageReferences"] ||= []
 
+# Find or create the package reference
+package_reference = project.root_object.package_references.find { |pkg| pkg.repositoryURL == package_url }
+unless package_reference
+  package_reference = project.new(Xcodeproj::Project::Object::XCRemoteSwiftPackageReference)
+  package_reference.repositoryURL = package_url
+  package_reference.requirement = { "kind" => "exactVersion", "version" => exact_version }
+
+  project.root_object.package_references << package_reference
+  puts "Added new package reference for '#{package_url}'"
+else
+  package_reference.requirement = { "kind" => "exactVersion", "version" => exact_version }
+  puts "Package reference for '#{package_url}' already exists"
+end
+
+# Check for existing product dependency
+product_dependencies = project.objects.select { |obj| obj.isa == "XCSwiftPackageProductDependency" }
+product_dependency = product_dependencies.find { |obj| obj.product_name == product_name }
+
+unless product_dependency
+  product_dependency = project.new(Xcodeproj::Project::Object::XCSwiftPackageProductDependency)
+  product_dependency.product_name = product_name
+  product_dependency.package = package_reference
+  project.objects << product_dependency
+  puts "Created XCSwiftPackageProductDependency for '#{product_name}'"
+end
+
+# Add to Link Binary With Libraries using productRef
+frameworks_build_phase = target.frameworks_build_phase || target.new_frameworks_build_phase
+
+# Check if the product is already in the frameworks build phase
+build_file = frameworks_build_phase.files.find { |bf| bf.respond_to?(:product_ref) && bf.product_ref == product_dependency }
+unless build_file
+  build_file = project.new(Xcodeproj::Project::Object::PBXBuildFile)
+  build_file.product_ref = product_dependency  # Use product_ref instead of file_ref
+  frameworks_build_phase.files << build_file
+  puts "Added '#{product_name}' to Link Binary With Libraries (using productRef)"
+else
+  puts "'#{product_name}' already exists in Link Binary With Libraries"
+end
+
+# Save changes
+project.save
+puts "Successfully processed remote Swift package '#{product_name}' for target '#{target_name}'"
+puts ""
 EOF
 }
 
-add_framework_reference "$PROJECT_PATH/$XCODEPROJ_FILE" "$XC_FRAMEWORK_NAME" "$APP_EXTENSION_NAME" "UnityFramework" "$TARGET_NAME"
+link_swift_package_binary_to_target "$XCODEPROJ_FILE" "$SWIFT_PACKAGE_URL" "AppnomixCommerce" "UnityFramework" "$XC_VERSION"
+link_swift_package_binary_to_target "$XCODEPROJ_FILE" "$SWIFT_PACKAGE_URL" "AppnomixCommerce" "$APP_EXTENSION_NAME" "$XC_VERSION"
+link_swift_package_binary_to_target "$XCODEPROJ_FILE" "$SWIFT_PACKAGE_URL" "AppnomixCommerce" "$TARGET_NAME" "$XC_VERSION"
 
 add_swift_to_UnityFramework() {
     project_path="$1"
