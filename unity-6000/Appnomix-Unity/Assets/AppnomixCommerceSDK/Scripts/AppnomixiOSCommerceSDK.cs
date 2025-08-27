@@ -1,10 +1,9 @@
-#if UNITY_IOS
-
 using UnityEngine;
 using System.Runtime.InteropServices;
 
 namespace AppnomixCommerceSDK.Scripts
-{
+{ 
+#if UNITY_IOS
     public class AppnomixiOSCommerceSDK : IAppnomixCommerceSDK
     {
         [DllImport("__Internal")]
@@ -15,7 +14,8 @@ namespace AppnomixCommerceSDK.Scripts
             string onboardingLogoAssetName,
             string appURLScheme,
             bool requestLocation,
-            bool requestTracking);
+            bool requestTracking,
+            string language);
 
         [DllImport("__Internal")]
         private static extern void AppnomixCommerceSDK_showOnboarding(AnalyticsEventCallback callback = null);
@@ -32,6 +32,7 @@ namespace AppnomixCommerceSDK.Scripts
         private readonly string appURLScheme;
         private readonly bool requestLocation;
         private readonly bool requestTracking;
+        private readonly string language;
 
         public AppnomixiOSCommerceSDK(
             string clientID,
@@ -39,7 +40,8 @@ namespace AppnomixCommerceSDK.Scripts
             string appGroupName,
             string appURLScheme,
             bool requestLocation,
-            bool requestTracking
+            bool requestTracking,
+            string language
         )
         {
             this.clientID = clientID;
@@ -48,6 +50,7 @@ namespace AppnomixCommerceSDK.Scripts
             this.appURLScheme = appURLScheme;
             this.requestLocation = requestLocation;
             this.requestTracking = requestTracking;
+            this.language = language;
 
             InitSdk();
         }
@@ -63,7 +66,8 @@ namespace AppnomixCommerceSDK.Scripts
                     "",
                     appURLScheme,
                     requestLocation,
-                    requestTracking);
+                    requestTracking,
+                    language);
             }
             catch (System.Exception e)
             {
@@ -96,6 +100,5 @@ namespace AppnomixCommerceSDK.Scripts
             AppnomixCommerceSDK_trackOfferDisplay(context);
         }    
     }
-}
-
 #endif
+}
