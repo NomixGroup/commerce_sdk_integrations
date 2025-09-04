@@ -22,6 +22,8 @@ namespace AppnomixCommerceSDK.Scripts
 
         bool IsOnboardingDone();
 
+        bool IsOnboardingAvailable();
+
         void TrackOfferDisplay(string context);
     }
 
@@ -69,6 +71,11 @@ namespace AppnomixCommerceSDK.Scripts
         public bool IsOnboardingDone()
         {
             return sdkWrapper?.IsOnboardingDone() ?? false;
+        }
+        
+        public bool IsOnboardingAvailable()
+        {
+            return sdkWrapper?.IsOnboardingAvailable() ?? false;
         }
 
         public void TrackOfferDisplay(string context)

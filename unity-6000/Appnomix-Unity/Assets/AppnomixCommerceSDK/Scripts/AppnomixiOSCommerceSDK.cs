@@ -95,6 +95,12 @@ namespace AppnomixCommerceSDK.Scripts
             return AppnomixCommerceSDK_isExtensionInstalled();
         }
 
+        public bool IsOnboardingAvailable()
+        {
+            // TODO
+            return false;
+        }
+
         public void TrackOfferDisplay(string context)
         {
             AppnomixCommerceSDK_trackOfferDisplay(context);
