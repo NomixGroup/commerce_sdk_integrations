@@ -24,6 +24,9 @@ namespace AppnomixCommerceSDK.Scripts
         private static extern bool AppnomixCommerceSDK_isExtensionInstalled();
 
         [DllImport("__Internal")]
+        private static extern bool AppnomixCommerceSDK_isOnboardingAvailable();
+
+        [DllImport("__Internal")]
         private static extern void AppnomixCommerceSDK_trackOfferDisplay(string context);
 
         private readonly string clientID;
@@ -97,8 +100,7 @@ namespace AppnomixCommerceSDK.Scripts
 
         public bool IsOnboardingAvailable()
         {
-            // TODO
-            return false;
+            return AppnomixCommerceSDK_isOnboardingAvailable();
         }
 
         public void TrackOfferDisplay(string context)
