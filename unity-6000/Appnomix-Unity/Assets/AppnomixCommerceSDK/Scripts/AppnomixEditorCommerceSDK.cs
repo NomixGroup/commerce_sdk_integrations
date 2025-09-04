@@ -15,6 +15,7 @@ namespace AppnomixCommerceSDK.Scripts
 
         public void LaunchOnboarding(AnalyticsEventCallback callback = null)
         {
+            Debug.Log("AppnomixCommerceSDKWrapper is working in Editor Env");
             callback.Invoke((long)AnalyticsEvent.OnboardingStarted);
             callback.Invoke((long)AnalyticsEvent.OnboardingCompleted);
             isOnboardingDone = true;
@@ -24,6 +25,12 @@ namespace AppnomixCommerceSDK.Scripts
         {
             Debug.Log("AppnomixCommerceSDKWrapper is working in Editor Env");
             return isOnboardingDone;
+        }
+
+        public bool IsOnboardingAvailable()
+        {
+            Debug.Log("AppnomixCommerceSDKWrapper is working in Editor Env");
+            return true;
         }
 
         public void TrackOfferDisplay(string context)

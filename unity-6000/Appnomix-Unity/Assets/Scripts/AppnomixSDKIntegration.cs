@@ -6,10 +6,10 @@ using UnityEngine;
 public class AppnomixSDKIntegration : MonoBehaviour
 {
     public TMP_Text onboardingStatus;
-    
+
     private static bool _textChanged;
     private static AnalyticsEvent? _analyticsEvent;
-    
+
     private static AppnomixCommerceSDKWrapper _sdk;
 
     void Start()
@@ -19,6 +19,7 @@ public class AppnomixSDKIntegration : MonoBehaviour
         {
             onboardingStatus.text = "Onboarding";
         }
+
         _sdk ??= new AppnomixCommerceSDKWrapper(
             "YOUR_CLIENT_ID", // clientID
             "YOUR_AUTH_TOKEN", // authToken
@@ -57,15 +58,14 @@ public class AppnomixSDKIntegration : MonoBehaviour
 
     public void LaunchOnboarding()
     {
-        if (!_sdk.IsOnboardingDone())
+        if (!_sdk.IsOnboardingAvailable())
         {
-            Debug.Log("Appnomix onboarding is starting.");
-            _sdk.LaunchOnboarding(HandleAnalyticsEvent);
+            Debug.Log("Appnomix onboarding is not available.");
+            return;
         }
-        else
-        {
-            Debug.LogError("Appnomix onboarding is completed.");
-        }
+        
+        Debug.Log("Appnomix onboarding is starting.");
+        _sdk.LaunchOnboarding(HandleAnalyticsEvent);
     }
 
     public void TrackOffer(string context)
@@ -76,10 +76,10 @@ public class AppnomixSDKIntegration : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_textChanged && onboardingStatus != null) 
+        if (_textChanged && onboardingStatus != null)
         {
             _textChanged = false;
             onboardingStatus.text = _analyticsEvent?.ToString();
-        }   
+        }
     }
 }

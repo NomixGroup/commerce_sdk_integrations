@@ -45,7 +45,7 @@ namespace AppnomixCommerceSDK.Scripts
         private readonly string _clientID;
         private readonly string _authToken;
         private readonly string _language;
-        private readonly AndroidJavaObject _couponsSdkFacade;
+        private readonly AndroidJavaObject _appnomixSdkFacade;
 
         public AppnomixAndroidCommerceSDK(
             string clientID,
@@ -57,9 +57,9 @@ namespace AppnomixCommerceSDK.Scripts
             _authToken = authToken;
             _language = language;
 
-            using (var sdkClass = new AndroidJavaClass("app.appnomix.sdk.external.CouponsSdkFacade"))
+            using (var sdkClass = new AndroidJavaClass("app.appnomix.sdk.external.AppnomixSdkFacade"))
             {
-                _couponsSdkFacade = sdkClass.GetStatic<AndroidJavaObject>("INSTANCE"); // If it's a singleton pattern
+                _appnomixSdkFacade = sdkClass.GetStatic<AndroidJavaObject>("INSTANCE"); // If it's a singleton pattern
             }
 
             InitSdk();
@@ -67,14 +67,14 @@ namespace AppnomixCommerceSDK.Scripts
 
         private void InitSdk()
         {
-            string configClassName = "app.appnomix.sdk.external.CouponsSdkFacade$Config";
+            string configClassName = "app.appnomix.sdk.external.AppnomixSdkFacade$Config";
             try
             {
                 // TODO - fix this in SDK
                 string language = _language == "" ? null : _language;
                 AndroidJavaObject configInstance = new AndroidJavaObject(configClassName, _authToken, _clientID, language);
 
-                _couponsSdkFacade.Call("setup", configInstance);
+                _appnomixSdkFacade.Call("setup", configInstance);
             }
             catch (System.Exception e)
             {
@@ -87,18 +87,18 @@ namespace AppnomixCommerceSDK.Scripts
             try
             {
                 var listenerProxy = new AppnomixEventListenerProxy(callback);
-                _couponsSdkFacade.Call("registerEventListener", listenerProxy);
+                _appnomixSdkFacade.Call("registerEventListener", listenerProxy);
 
                 AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
                 AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
                 string customizationJson = SDKCustomizationScript.CustomizationJson;
                 if (customizationJson.Length == 0)
                 {
-                    _couponsSdkFacade.Call("launchSdkOnboardingActivity", currentActivity);
+                    _appnomixSdkFacade.Call("launchSdkOnboardingActivity", currentActivity);
                 }
                 else
                 {
-                    _couponsSdkFacade.Call("launchSdkOnboardingActivity", currentActivity, customizationJson);
+                    _appnomixSdkFacade.Call("launchSdkOnboardingActivity", currentActivity, customizationJson);
                 }
             }
             catch (System.Exception e)
@@ -111,7 +111,7 @@ namespace AppnomixCommerceSDK.Scripts
         {
             try
             {
-                return _couponsSdkFacade.Call<bool>("isAccessibilityServiceEnabled");
+                return _appnomixSdkFacade.Call<bool>("isAccessibilityServiceEnabled");
             }
             catch (System.Exception e)
             {
@@ -120,11 +120,24 @@ namespace AppnomixCommerceSDK.Scripts
             }
         }
 
+        public bool IsOnboardingAvailable()
+        {
+            try
+            {
+                return _appnomixSdkFacade.Call<bool>("isOnboardingAvailable");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Failed to get SDK onboarding available status: " + e.Message);
+                return false;
+            }
+        }
+
         public void TrackOfferDisplay(string context)
         {
             try
             {
-                _couponsSdkFacade.Call("trackOfferDisplay", context);
+                _appnomixSdkFacade.Call("trackOfferDisplay", context);
             }
             catch (System.Exception e)
             {
