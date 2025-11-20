@@ -25,8 +25,6 @@ public class AppnomixSDKIntegration : MonoBehaviour
             "YOUR_AUTH_TOKEN", // authToken
             "group.app.appnomix.SampleApplication", // iOSAppGroupName (e.g. group.app.appnomix.demo-unity)
             "sample-application://", // iOSAppURLScheme (e.g. savers-league-coupons://)
-            true, // requestLocation
-            true, // requestTracking
             "" // language: empty string for system default language
         );
     }
