@@ -81,3 +81,4 @@ crashlytics-build.properties
 /Unity/Temp
 /Unity/UserSettings
 /unity-6000/Appnomix-Unity/Builds
+*.md

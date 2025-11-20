@@ -36,8 +36,6 @@ namespace AppnomixCommerceSDK.Scripts
             string authToken,
             string iOSAppGroupName, // e.g. group.app.appnomix.demo-unity
             string iOSAppURLScheme, // e.g. savers-league-coupons://
-            bool requestLocation,
-            bool requestTracking,
             string language)
         {
 #if UNITY_EDITOR
@@ -48,8 +46,6 @@ namespace AppnomixCommerceSDK.Scripts
                             authToken,
                             iOSAppGroupName,
                             iOSAppURLScheme,
-                            requestLocation,
-                            requestTracking,
                             language
                         );
 #elif UNITY_ANDROID
