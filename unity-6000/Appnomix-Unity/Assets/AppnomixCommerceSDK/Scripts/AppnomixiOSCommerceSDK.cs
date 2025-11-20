@@ -7,34 +7,29 @@ namespace AppnomixCommerceSDK.Scripts
     public class AppnomixiOSCommerceSDK : IAppnomixCommerceSDK
     {
         [DllImport("__Internal")]
-        private static extern void AppnomixCommerceSDK_start(
+        private static extern void AppnomixCSDK_start(
             string clientID,
             string authToken,
             string appGroupName,
-            string onboardingLogoAssetName,
             string appURLScheme,
-            bool requestLocation,
-            bool requestTracking,
             string language);
 
         [DllImport("__Internal")]
-        private static extern void AppnomixCommerceSDK_showOnboarding(AnalyticsEventCallback callback = null);
+        private static extern void AppnomixCSDK_showOnboarding(AnalyticsEventCallback callback = null);
 
         [DllImport("__Internal")]
-        private static extern bool AppnomixCommerceSDK_isExtensionInstalled();
+        private static extern bool AppnomixCSDK_isExtensionInstalled();
 
         [DllImport("__Internal")]
-        private static extern bool AppnomixCommerceSDK_isOnboardingAvailable();
+        private static extern bool AppnomixCSDK_isOnboardingAvailable();
 
         [DllImport("__Internal")]
-        private static extern void AppnomixCommerceSDK_trackOfferDisplay(string context);
+        private static extern void AppnomixCSDK_trackOfferDisplay(string context);
 
         private readonly string clientID;
         private readonly string authToken;
         private readonly string appGroupName;
         private readonly string appURLScheme;
-        private readonly bool requestLocation;
-        private readonly bool requestTracking;
         private readonly string language;
 
         public AppnomixiOSCommerceSDK(
@@ -42,8 +37,6 @@ namespace AppnomixCommerceSDK.Scripts
             string authToken,
             string appGroupName,
             string appURLScheme,
-            bool requestLocation,
-            bool requestTracking,
             string language
         )
         {
@@ -51,8 +44,6 @@ namespace AppnomixCommerceSDK.Scripts
             this.authToken = authToken;
             this.appGroupName = appGroupName;
             this.appURLScheme = appURLScheme;
-            this.requestLocation = requestLocation;
-            this.requestTracking = requestTracking;
             this.language = language;
 
             InitSdk();
@@ -62,14 +53,11 @@ namespace AppnomixCommerceSDK.Scripts
         {
             try
             {
-                AppnomixCommerceSDK_start(
+                AppnomixCSDK_start(
                     clientID,
                     authToken,
                     appGroupName,
-                    "",
                     appURLScheme,
-                    requestLocation,
-                    requestTracking,
                     language);
             }
             catch (System.Exception e)
@@ -84,7 +72,7 @@ namespace AppnomixCommerceSDK.Scripts
             {
                 if (!IsOnboardingDone())
                 {
-                    AppnomixCommerceSDK_showOnboarding(callback);
+                    AppnomixCSDK_showOnboarding(callback);
                 }
             }
             catch (System.Exception e)
@@ -95,17 +83,17 @@ namespace AppnomixCommerceSDK.Scripts
 
         public bool IsOnboardingDone()
         {
-            return AppnomixCommerceSDK_isExtensionInstalled();
+            return AppnomixCSDK_isExtensionInstalled();
         }
 
         public bool IsOnboardingAvailable()
         {
-            return AppnomixCommerceSDK_isOnboardingAvailable();
+            return AppnomixCSDK_isOnboardingAvailable();
         }
 
         public void TrackOfferDisplay(string context)
         {
-            AppnomixCommerceSDK_trackOfferDisplay(context);
+            AppnomixCSDK_trackOfferDisplay(context);
         }    
     }
 #endif
