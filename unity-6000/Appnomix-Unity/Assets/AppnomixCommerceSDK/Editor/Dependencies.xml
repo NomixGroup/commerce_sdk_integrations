@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dependencies>
     <androidPackages>
-        <androidPackage spec="app.appnomix:sdk:2.0.1" />
+        <androidPackage spec="app.appnomix:sdk:2.0.2" />
     </androidPackages>
 </dependencies>
