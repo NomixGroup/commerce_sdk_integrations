@@ -18,7 +18,7 @@ namespace AppnomixCommerceSDK.Scripts
 
     public interface IAppnomixCommerceSDK
     {
-        void LaunchOnboarding(AnalyticsEventCallback callback = null);
+        void ShowOnboarding(AnalyticsEventCallback callback = null);
 
         bool IsOnboardingDone();
 
@@ -59,9 +59,9 @@ namespace AppnomixCommerceSDK.Scripts
 #endif
         }
 
-        public void LaunchOnboarding(AnalyticsEventCallback callback = null)
+        public void ShowOnboarding(AnalyticsEventCallback callback = null)
         {
-            sdkWrapper?.LaunchOnboarding(callback);
+            sdkWrapper?.ShowOnboarding(callback);
         }
 
         public bool IsOnboardingDone()
