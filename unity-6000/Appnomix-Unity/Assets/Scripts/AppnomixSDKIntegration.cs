@@ -54,7 +54,7 @@ public class AppnomixSDKIntegration : MonoBehaviour
         _textChanged = true;
     }
 
-    public void LaunchOnboarding()
+    public void ShowOnboarding()
     {
         if (!_sdk.IsOnboardingAvailable())
         {
@@ -63,7 +63,7 @@ public class AppnomixSDKIntegration : MonoBehaviour
         }
         
         Debug.Log("Appnomix onboarding is starting.");
-        _sdk.LaunchOnboarding(HandleAnalyticsEvent);
+        _sdk.ShowOnboarding(HandleAnalyticsEvent);
     }
 
     public void TrackOffer(string context)

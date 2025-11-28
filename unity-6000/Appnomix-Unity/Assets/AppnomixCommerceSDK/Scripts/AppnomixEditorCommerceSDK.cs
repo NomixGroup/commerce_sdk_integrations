@@ -13,7 +13,7 @@ namespace AppnomixCommerceSDK.Scripts
             Debug.Log("AppnomixCommerceSDKWrapper is initialized in Editor env.");
         }
 
-        public void LaunchOnboarding(AnalyticsEventCallback callback = null)
+        public void ShowOnboarding(AnalyticsEventCallback callback = null)
         {
             Debug.Log("AppnomixCommerceSDKWrapper is working in Editor Env");
             callback.Invoke((long)AnalyticsEvent.OnboardingStarted);

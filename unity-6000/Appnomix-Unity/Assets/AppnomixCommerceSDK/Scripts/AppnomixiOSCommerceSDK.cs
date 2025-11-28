@@ -66,7 +66,7 @@ namespace AppnomixCommerceSDK.Scripts
             }
         }
 
-        public void LaunchOnboarding(AnalyticsEventCallback callback = null)
+        public void ShowOnboarding(AnalyticsEventCallback callback = null)
         {
             try
             {

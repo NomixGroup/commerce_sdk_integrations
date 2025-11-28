@@ -448,7 +448,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1725937954}
         m_TargetAssemblyTypeName: AppnomixSDKIntegration, Assembly-CSharp
-        m_MethodName: LaunchOnboarding
+        m_MethodName: ShowOnboarding
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1004,7 +1004,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 65709107, guid: df46a9254aca4eb45baeb22c2d2014f9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: LaunchOnboarding
+      value: ShowOnboarding
       objectReference: {fileID: 0}
     - target: {fileID: 65709107, guid: df46a9254aca4eb45baeb22c2d2014f9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
