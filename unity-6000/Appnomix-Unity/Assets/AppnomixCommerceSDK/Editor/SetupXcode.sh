@@ -16,7 +16,7 @@ PROJECT_PATH="$1"
 XC_TEMPLATE_NAME="Appnomix.Safari.Extension.xctemplate"
 XC_FRAMEWORK_NAME="AppnomixCommerce.xcframework"
 
-XC_VERSION=2.0.0
+XC_VERSION=2.1.0
 
 TEMPLATE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary/releases/download/$XC_VERSION/$XC_TEMPLATE_NAME.zip"
 SWIFT_PACKAGE_URL="https://github.com/NomixGroup/ios_commerce_sdk_binary"
